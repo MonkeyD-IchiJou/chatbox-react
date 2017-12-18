@@ -6,11 +6,11 @@ class Chatbox extends Component {
         return (
             <div>
                 this is my chatbox pls.. the other one is fake af
-                <Button>
-                    touch
+                <Button onClick={() => { this.props.connectToLivechatSocket()}}>
+                    connecttolivechat
                 </Button>
             </div>
-        );
+        )
     }
 }
 
