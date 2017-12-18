@@ -1,5 +1,7 @@
+import defaultEnvStore from './defaultEnvStore'
+
 const envReducer = (
-    state = { backendUrl: '', validatingUser: true },
+    state = defaultEnvStore,
     action
 ) => {
 
