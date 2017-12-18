@@ -5,6 +5,7 @@ class SocketConnect {
     constructor(socketName) {
         this.socket = ''
         this.socketName = socketName
+        this.socketId = ''
     }
 
     connectSocket(url) {
@@ -14,7 +15,6 @@ class SocketConnect {
     disconnectSocket() {
         if(this.socket) {
             this.socket.close()
-            console.log('disconnect socket')
         }
     }
 
@@ -28,6 +28,14 @@ class SocketConnect {
         if (this.socket) { 
             this.socket.emit(channelName, data)
         }
+    }
+
+    setSocketId(sid) {
+        this.socketId = sid
+    }
+
+    getSocketId() {
+        return this.socketId
     }
 
 }
