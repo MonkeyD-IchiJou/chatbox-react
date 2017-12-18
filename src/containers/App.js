@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Button } from 'semantic-ui-react'
 
 class App extends Component {
     render() {
@@ -7,7 +8,10 @@ class App extends Component {
         return (
             <div>
                 this is my chatbox pls.. the other one is fake af
-      </div>
+                <Button>
+                    touch
+                </Button>
+            </div>
         );
     }
 }
