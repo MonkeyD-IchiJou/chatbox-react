@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import SocketConnect from './socketapi'
-import { setUser_act } from './actions/userActions'
+import { 
+    setLivechatRequirement_act,
+    usrReqLivechat_act
+} from './actions/userActions'
+import {
+    setValidatingUser_act, 
+    setHasLivechatConnect_act,
+    setHasChatbotConnect_act
+} from './actions/envActions'
 import Chatbox from './components/Chatbox'
 
 class App extends Component {
@@ -9,13 +17,48 @@ class App extends Component {
     constructor(props) {
         super(props)
 
+        // storing socket data in my App state locally
         this.state = {
             livechatSocket: new SocketConnect('livechatSocket')
         }
+    }
 
-        // need to get the username and email first, before i can connect to live chat
-        this.props.dispatch(setUser_act('ichijou', 'ichijou8282@gmail.com', 1, 'some problem pls'))
+    componentWillMount() {
 
+        let envReducer = this.props.envReducer
+        let chatboxMode = envReducer.chatboxMode
+
+        switch (chatboxMode) {
+            case 'CHATBOT':
+                this.props.dispatch(setHasChatbotConnect_act(true))
+                break
+
+            case 'LIVECHAT':
+                this.connectToLivechatSocket()
+                this.props.dispatch(usrReqLivechat_act()) // auto set to true, then chatbot set to false
+                break
+
+            case 'CHATBOT_LIVECHAT':
+                // connect to chatbot
+                this.props.dispatch(setHasChatbotConnect_act(true))
+
+                // connect to live chat
+                this.connectToLivechatSocket()
+                break
+
+            default:
+                break
+        }
+
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        // do not update my component if i am validating the user
+        return !nextProps.envReducer.validatingUser
+    }
+
+    componentWillUnmount() {
+        this.disconnectLivechatSocket()
     }
 
     connectToLivechatSocket = () => {
@@ -25,54 +68,92 @@ class App extends Component {
 
         let envReducer = this.props.envReducer
         let userReducer = this.props.userReducer
-
         let livechatSocket = this.state.livechatSocket
-        let livechatId = envReducer.livechatId
-        let username = userReducer.username
-        let userproblem = userReducer.problem
-        let attentionLevel = userReducer.requireAttention
 
-        // need to have livechatId, username and userproblem.. then can connect to my server
-        if (livechatId && username && userproblem) {
-            // if have livechatId...
-            // try to connect with my livechat socket server
-            livechatSocket.connectSocket(envReducer.backendUrl + '/lcIO')
+        // if have livechatId...
+        // try to connect with my livechat socket server
+        livechatSocket.connectSocket(envReducer.backendUrl + '/lcIO')
 
-            // live chat socket subscribtions
-            livechatSocket.subscribe('connect', () => {
+        // live chat socket subscribtions
+        livechatSocket.subscribe('connect', () => {
 
-                // asking to join room
-                livechatSocket.socketEmit('client_join_room', {
-                    roomId: livechatId,
-                    username: username,
-                    message: userproblem,
-                    attentionLevel: attentionLevel
-                })
+            // asking to join room
+            livechatSocket.socketEmit('client_join_room', {
+                roomId: envReducer.livechatId,
+                username: userReducer.username,
+                message: userReducer.userproblem,
+                attentionLevel: userReducer.requireAttention
+            })
 
-                livechatSocket.subscribe('client_joined', (data) => {
-                    livechatSocket.setSocketId(data.socketId)
-                    console.log(livechatSocket.getSocketId())
-                })
+            livechatSocket.subscribe('client_joined', (data) => {
+
+                // set the socket id
+                livechatSocket.setSocketId(data.socketId)
+
+                // live chat has connected
+                this.props.dispatch(setHasLivechatConnect_act(true))
 
             })
-        }
 
-        
+        })
+
     }
 
     disconnectLivechatSocket = () => {
         this.state.livechatSocket.disconnectSocket()
     }
 
-    componentWillUnmount() {
-        this.disconnectLivechatSocket()
+    emitUserInfoToLivechatSocket = () => {
+        // emit to live chat socket server about this updated username and problem
+        this.state.livechatSocket.socketEmit('client_update_info', {
+            username: this.props.userReducer.username,
+            message: this.props.userReducer.problem
+        })
+    }
+
+    updateUserInfo = async (username, problem, successCB) => {
+
+        // loading screen start
+        this.props.dispatch(setValidatingUser_act(true))
+
+        await this.props.dispatch(setLivechatRequirement_act(username, problem))
+
+        this.emitUserInfoToLivechatSocket()
+
+        successCB()
+
+        // finish loading
+        this.props.dispatch(setValidatingUser_act(false))
+
     }
 
     render() {
+
+        let envReducer = this.props.envReducer
+        let chatboxMode = envReducer.chatboxMode
+
+        switch (chatboxMode) {
+            case 'CHATBOT':
+                // only chatbot
+
+                break
+
+            case 'LIVECHAT':
+                // straight away show the live chat form at the very begining pls
+
+                break
+
+            case 'CHATBOT_LIVECHAT':
+                // chatbot first.. then if user want live chat.. then submit messages to live chat people
+
+                break
+
+            default:
+                break
+        }
+
         return (
-            <div>
-                <Chatbox connectToLivechatSocket={this.connectToLivechatSocket}/>
-            </div>
+            <Chatbox />
         )
     }
 }
