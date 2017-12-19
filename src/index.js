@@ -11,6 +11,16 @@ window.RenderApp = function (chatbotId, livechatId) {
     defaultEnvStore.chatbotId = chatbotId
     defaultEnvStore.livechatId = livechatId
 
+    if (chatbotId) {
+        defaultEnvStore.chatboxMode = 'CHATBOT'
+    }
+    if(livechatId) {
+        defaultEnvStore.chatboxMode = 'LIVECHAT'
+    }
+    if(chatbotId && livechatId) {
+        defaultEnvStore.chatboxMode = 'CHATBOT_LIVECHAT'
+    }
+
     new ReactDOM.render(
         <Provider store={store}>
             <App/>
