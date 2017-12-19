@@ -1,8 +1,11 @@
 let defaultEnvStore = {
-    backendUrl: 'https://localhost', 
-    validatingUser: true, 
+    backendUrl: 'https://localhost',
+    validatingUser: false, 
     livechatId: '',
-    chatbotId: ''
+    chatbotId: '',
+    chatboxMode: '',
+    chatbotConnect: false,
+    livechatConnect: false
 }
 
 export default (defaultEnvStore)

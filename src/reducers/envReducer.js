@@ -13,6 +13,20 @@ const envReducer = (
             }
             break
 
+        case "SET_CHATBOT_CONNECTION":
+            state = {
+                ...state,
+                chatbotConnect: action.payload
+            }
+            break
+
+        case "SET_LIVECHAT_CONNECTION":
+            state = {
+                ...state,
+                livechatConnect: action.payload
+            }
+            break
+
         default:
             break
     }
