@@ -8,6 +8,7 @@ import SocketConnect from './socketapi'
 import {
     setAppLoading_act
 } from './actions/envActions'*/
+import Chatbox from './components/Chatbox'
 
 class App extends Component {
 
@@ -50,6 +51,8 @@ class App extends Component {
     }
 
     componentWillUnmount() {
+        // disconnect 
+        this.disconnectChatbotSocket()
     }
 
     connectChatbotSocket = () => {
@@ -70,6 +73,11 @@ class App extends Component {
             chatbotSocket.subscribe('client_joined', (data) => {
                 // client successfully joined the room liao
             })
+
+            chatbotSocket.subscribe('chatbot_send_client', (data) => {
+                // receiving msg from chatbot
+                console.log(data)
+            })
         })
     }
 
@@ -85,14 +93,55 @@ class App extends Component {
         }
     }
 
+    render() {
+
+        let envReducer = this.props.envReducer
+        let chatboxMode = envReducer.chatboxMode
+
+        switch (chatboxMode) {
+            case 'CHATBOT':
+                // only chatbot
+
+                break
+
+            case 'LIVECHAT':
+                // straight away show the live chat form at the very begining pls
+
+                break
+
+            case 'CHATBOT_LIVECHAT':
+                // chatbot first.. then if user want live chat.. then submit messages to live chat people
+
+                break
+
+            default:
+                break
+        }
+
+        return (
+            <Chatbox sendMsg={this.emitMsgToChatbot}/>
+        )
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+        envReducer: state.envReducer,
+        userReducer: state.userReducer
+    }
+}
+
+export default connect(mapStateToProps)(App)
+
+/*
     disconnectChatbotSocket = () => {
-        
+        this.state.chatbotSocket.disconnectSocket()
     }
 
     connectToLivechatSocket = () => {
 
         // disconnect the previous live chat if exist
-        /*this.disconnectLivechatSocket()
+        this.disconnectLivechatSocket()
 
         let envReducer = this.props.envReducer
         let userReducer = this.props.userReducer
@@ -125,7 +174,7 @@ class App extends Component {
 
             })
 
-        })*/
+        })
 
     }
 
@@ -153,49 +202,6 @@ class App extends Component {
         successCB()
 
         // finish loading
-        this.props.dispatch(setValidatingUser_act(false))*/
+        this.props.dispatch(setValidatingUser_act(false))
 
-    }
-
-    render() {
-
-        let envReducer = this.props.envReducer
-        let chatboxMode = envReducer.chatboxMode
-
-        switch (chatboxMode) {
-            case 'CHATBOT':
-                // only chatbot
-
-                break
-
-            case 'LIVECHAT':
-                // straight away show the live chat form at the very begining pls
-
-                break
-
-            case 'CHATBOT_LIVECHAT':
-                // chatbot first.. then if user want live chat.. then submit messages to live chat people
-
-                break
-
-            default:
-                break
-        }
-
-        return (
-            <div>
-                hey there
-                <button onClick={()=>{this.emitMsgToChatbot('hello??')}} />
-            </div>
-        )
-    }
-}
-
-const mapStateToProps = (state) => {
-    return {
-        envReducer: state.envReducer,
-        userReducer: state.userReducer
-    }
-}
-
-export default connect(mapStateToProps)(App)
+    }*/
