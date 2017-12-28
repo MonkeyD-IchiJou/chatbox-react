@@ -1,26 +1,6 @@
-export function setValidatingUser_act(payload) {
-
+export function setAppLoading_act(payload) {
     return {
-        type: 'SET_VALIDATING_USR',
+        type: 'SET_APP_LOADING',
         payload: payload
     }
-
-}
-
-export function setHasChatbotConnect_act(connection) {
-
-    return {
-        type: 'SET_CHATBOT_CONNECTION',
-        payload: connection
-    }
-
-}
-
-export function setHasLivechatConnect_act(connection) {
-
-    return {
-        type: 'SET_LIVECHAT_CONNECTION',
-        payload: connection
-    }
-
 }
