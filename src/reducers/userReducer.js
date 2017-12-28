@@ -1,31 +1,15 @@
 const userReducer = (
     state = { 
         username: '', 
-        email: '', 
-        requireAttention: 0, 
-        problem: '',
-        requestChatbot: true, 
-        requestLivechat: false 
+        email: '',
+        problem: '', // what is the problem that this user has
+        requestChatbot: true,  // by default, chatbot is requested by user
+        requestLivechat: false  // live chat will be requested if user asked for it. Or it is LIVECHAT only mode
     },
     action
 ) => {
 
     switch (action.type) {
-        case "SET_LIVECHAT_REQUIREMENT_FULFILLED":
-            state = {
-                ...state,
-                username: action.payload.username,
-                problem: action.payload.problem
-            }
-            break
-
-        case "SET_ATTENTIONLEVEL":
-            state = {
-                ...state,
-                requireAttention: action.payload
-            }
-            break
-
         case "SET_REQ_LIVECHAT":
             state = {
                 ...state,

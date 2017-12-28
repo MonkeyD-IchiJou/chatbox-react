@@ -6,24 +6,10 @@ const envReducer = (
 ) => {
 
     switch (action.type) {
-        case "SET_VALIDATING_USR":
+        case "SET_APP_LOADING":
             state = {
                 ...state,
-                validatingUser: action.payload
-            }
-            break
-
-        case "SET_CHATBOT_CONNECTION":
-            state = {
-                ...state,
-                chatbotConnect: action.payload
-            }
-            break
-
-        case "SET_LIVECHAT_CONNECTION":
-            state = {
-                ...state,
-                livechatConnect: action.payload
+                apploading: action.payload
             }
             break
 
