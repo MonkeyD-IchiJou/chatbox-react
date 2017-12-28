@@ -1,16 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import SocketConnect from './socketapi'
-import { 
-    setLivechatRequirement_act,
+/*import {
+    usrReqChatbot_act,
     usrReqLivechat_act
 } from './actions/userActions'
 import {
-    setValidatingUser_act, 
-    setHasLivechatConnect_act,
-    setHasChatbotConnect_act
-} from './actions/envActions'
-import Chatbox from './components/Chatbox'
+    setAppLoading_act
+} from './actions/envActions'*/
 
 class App extends Component {
 
@@ -19,31 +16,26 @@ class App extends Component {
 
         // storing socket data in my App state locally
         this.state = {
+            chatbotSocket: new SocketConnect('chatbotSocket'),
             livechatSocket: new SocketConnect('livechatSocket')
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         let envReducer = this.props.envReducer
         let chatboxMode = envReducer.chatboxMode
 
         switch (chatboxMode) {
             case 'CHATBOT':
-                this.props.dispatch(setHasChatbotConnect_act(true))
+                // chatbot only, connect to my chatbot socket server pls
+                this.connectChatbotSocket()
                 break
 
             case 'LIVECHAT':
-                this.connectToLivechatSocket()
-                this.props.dispatch(usrReqLivechat_act()) // auto set to true, then chatbot set to false
                 break
 
             case 'CHATBOT_LIVECHAT':
-                // connect to chatbot
-                this.props.dispatch(setHasChatbotConnect_act(true))
-
-                // connect to live chat
-                this.connectToLivechatSocket()
                 break
 
             default:
@@ -54,17 +46,53 @@ class App extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         // do not update my component if i am validating the user
-        return !nextProps.envReducer.validatingUser
+        return !nextProps.envReducer.apploading
     }
 
     componentWillUnmount() {
-        this.disconnectLivechatSocket()
+    }
+
+    connectChatbotSocket = () => {
+        let envReducer = this.props.envReducer
+        let chatbotSocket = this.state.chatbotSocket
+
+        // connect to my socket server
+        chatbotSocket.connectSocket(envReducer.backendUrl + '/cbIO')
+
+        // my chatbot socket server subscription
+        chatbotSocket.subscribe('connect', () => {
+
+            // first, asking to join my chatbot room
+            chatbotSocket.socketEmit('client_join_room', {
+                roomId: envReducer.chatbotId
+            })
+
+            chatbotSocket.subscribe('client_joined', (data) => {
+                // client successfully joined the room liao
+            })
+        })
+    }
+
+    emitMsgToChatbot = (msg) => {
+        let chatbotSocket = this.state.chatbotSocket
+
+        if (chatbotSocket.socket.connected) {
+            // if connected to my socket server and joined the room liao
+            chatbotSocket.socketEmit('client_send_chatbot', {
+                msg: msg
+            })
+            // update ui component
+        }
+    }
+
+    disconnectChatbotSocket = () => {
+        
     }
 
     connectToLivechatSocket = () => {
 
         // disconnect the previous live chat if exist
-        this.disconnectLivechatSocket()
+        /*this.disconnectLivechatSocket()
 
         let envReducer = this.props.envReducer
         let userReducer = this.props.userReducer
@@ -76,6 +104,8 @@ class App extends Component {
 
         // live chat socket subscribtions
         livechatSocket.subscribe('connect', () => {
+
+            console.log('adfasf')
 
             // asking to join room
             livechatSocket.socketEmit('client_join_room', {
@@ -95,7 +125,7 @@ class App extends Component {
 
             })
 
-        })
+        })*/
 
     }
 
@@ -114,7 +144,7 @@ class App extends Component {
     updateUserInfo = async (username, problem, successCB) => {
 
         // loading screen start
-        this.props.dispatch(setValidatingUser_act(true))
+        /*this.props.dispatch(setValidatingUser_act(true))
 
         await this.props.dispatch(setLivechatRequirement_act(username, problem))
 
@@ -123,7 +153,7 @@ class App extends Component {
         successCB()
 
         // finish loading
-        this.props.dispatch(setValidatingUser_act(false))
+        this.props.dispatch(setValidatingUser_act(false))*/
 
     }
 
@@ -153,7 +183,10 @@ class App extends Component {
         }
 
         return (
-            <Chatbox />
+            <div>
+                hey there
+                <button onClick={()=>{this.emitMsgToChatbot('hello??')}} />
+            </div>
         )
     }
 }
