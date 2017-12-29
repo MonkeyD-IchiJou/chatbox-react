@@ -95,7 +95,7 @@ class ChatboxBody extends Component {
         let messageBody = chatMessageBody
 
         return (
-            <Segment style={{ 
+            <Segment className="handle" style={{ 
                 maxHeight: this.props.maxHeight,
                 minHeight: this.props.minHeight,
                 minWidth: '350px',
