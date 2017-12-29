@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ChatboxBody from './ChatboxBody'
 import ChatboxForm from './ChatboxForm'
 import { Accordion, Icon, Responsive } from 'semantic-ui-react'
+import Draggable from 'react-draggable'
 
 class Chatbox extends Component {
 
@@ -32,6 +33,7 @@ class Chatbox extends Component {
             paddingRight: '15px'
         }
         let mobileBoxStyle = {}
+        let axis = ''
 
         if (headerCollapse) {
             headerStyle = (
@@ -46,6 +48,7 @@ class Chatbox extends Component {
 
             // when collapse header in mobile, turn it back to desktop verion
             mobileBoxStyle = defaultBoxStyle
+            axis = 'none'
         }
         else {
             headerStyle = (
@@ -66,42 +69,51 @@ class Chatbox extends Component {
                 width: '100%',
                 margin: 'auto'
             }
+
+            axis = 'both'
         }
 
         return (
             <div style={{ margin: '0 0 1000px' }}>
 
                 <Responsive as={'div'} minWidth={767} maxWidth={2559}>
-                    <div style={defaultBoxStyle}>
 
-                        <Accordion fluid inverted={true}>
+                    <Draggable
+                        handle=".handle"
+                        axis = {axis}
+                    >
+                        <div style={defaultBoxStyle}>
+                            
+                            <Accordion fluid inverted={true}>
 
-                            <Accordion.Title
-                                active={!headerCollapse}
-                                onClick={this.handleHeaderClick}
-                                style={{
-                                    backgroundColor: 'black',
-                                    paddingBottom: '5px',
-                                    paddingTop: '7px',
-                                    borderRadius: '7px 7px 0 0'
-                                }}
-                            >
-                                {headerStyle}
-                            </Accordion.Title>
+                                <Accordion.Title
+                                    active={!headerCollapse}
+                                    onClick={this.handleHeaderClick}
+                                    style={{
+                                        backgroundColor: 'black',
+                                        paddingBottom: '5px',
+                                        paddingTop: '7px',
+                                        borderRadius: '7px 7px 0 0'
+                                    }}
+                                >
+                                    {headerStyle}
+                                </Accordion.Title>
 
-                            <Accordion.Content
-                                active={!headerCollapse}
-                                style={{
-                                    padding: '0px'
-                                }}
-                            >
-                                <ChatboxBody minHeight={'400px'} maxHeight={'400px'}/>
-                                <ChatboxForm />
-                            </Accordion.Content>
+                                <Accordion.Content
+                                    active={!headerCollapse}
+                                    style={{
+                                        padding: '0px'
+                                    }}
+                                >
+                                    <ChatboxBody minHeight={'400px'} maxHeight={'400px'} />
+                                    <ChatboxForm />
+                                </Accordion.Content>
 
-                        </Accordion>
+                            </Accordion>
 
-                    </div>
+                        </div>
+                    </Draggable>
+
                 </Responsive>
 
                 <Responsive as={'div'} {...Responsive.onlyMobile} onUpdate={this.handleResponsive}>
