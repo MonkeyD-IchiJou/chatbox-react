@@ -4,95 +4,89 @@ import {Icon, Segment, Comment, Divider } from 'semantic-ui-react'
 class ChatboxBody extends Component {
 
     render() {
+        const allMsgs = this.props.allMsgs
+        let renderbody = ''
+        if (allMsgs.length > 0) {
+            let ii = 0
+            renderbody = allMsgs.map((msg) => {
+                ii++
+                if (msg.from === 'user') {
+                    return (
+                        <Comment key={ii}>
 
-        let botTxtMsg = (
-            <Comment >
+                            <Comment.Avatar
+                                as={Icon}
+                                color='teal'
+                                size='large'
+                                name='user'
+                            />
 
-                <Comment.Avatar
-                    as={Icon}
-                    inverted
-                    color='black'
-                    size='large'
-                    name='spy'
-                />
+                            <Comment.Content>
 
-                <Comment.Content>
+                                <Comment.Author as={'a'}>User</Comment.Author>
 
-                    <Comment.Author as={'a'}>Matt</Comment.Author>
+                                <Comment.Metadata>
+                                    <div>Today at 5:42PM</div>
+                                </Comment.Metadata>
 
-                    <Comment.Metadata>
-                        <div>Today at 5:42PM</div>
-                    </Comment.Metadata>
+                                <Comment.Text>{msg.msg}</Comment.Text>
 
-                    <Comment.Text>How artistic!</Comment.Text>
+                                <Comment.Actions>
+                                    <Comment.Action style={{ margin: '0' }}>
+                                        <Icon name='hide' size='large' />
+                                    </Comment.Action>
+                                </Comment.Actions>
 
-                    <Comment.Actions>
-                        <Comment.Action style={{ margin: '0' }}>
-                            <Icon name='smile' size='large' />
-                        </Comment.Action>
-                        <Comment.Action style={{ margin: '0' }}>
-                            <Icon name='meh' size='large' />
-                        </Comment.Action>
-                        <Comment.Action style={{ margin: '0' }}>
-                            <Icon name='frown' size='large' />
-                        </Comment.Action>
-                    </Comment.Actions>
+                            </Comment.Content>
 
-                </Comment.Content>
+                            <Divider />
 
-            </Comment>
-        )
+                        </Comment>
+                    )
+                }
+                else if (msg.from === 'bot') {
+                    return (
+                        <Comment key={ii}>
 
-        let userTxtMsg = (
-            <Comment>
+                            <Comment.Avatar
+                                as={Icon}
+                                inverted
+                                color='black'
+                                size='large'
+                                name='spy'
+                            />
 
-                <Comment.Avatar
-                    as={Icon}
-                    color='teal'
-                    size='large'
-                    name='user'
-                />
+                            <Comment.Content>
 
-                <Comment.Content>
+                                <Comment.Author as={'a'}>Matt</Comment.Author>
 
-                    <Comment.Author as={'a'}>User</Comment.Author>
+                                <Comment.Metadata>
+                                    <div>Today at 5:42PM</div>
+                                </Comment.Metadata>
 
-                    <Comment.Metadata>
-                        <div>Today at 5:42PM</div>
-                    </Comment.Metadata>
+                                <Comment.Text>{msg.msg[0]}</Comment.Text>
 
-                    <Comment.Text>Dude this is awesome</Comment.Text>
+                                <Comment.Actions>
+                                    <Comment.Action style={{ margin: '0' }}>
+                                        <Icon name='smile' size='large' />
+                                    </Comment.Action>
+                                    <Comment.Action style={{ margin: '0' }}>
+                                        <Icon name='meh' size='large' />
+                                    </Comment.Action>
+                                    <Comment.Action style={{ margin: '0' }}>
+                                        <Icon name='frown' size='large' />
+                                    </Comment.Action>
+                                </Comment.Actions>
 
-                    <Comment.Actions>
-                        <Comment.Action style={{ margin: '0' }}>
-                            <Icon name='hide' size='large' />
-                        </Comment.Action>
-                    </Comment.Actions>
+                            </Comment.Content>
+                            <Divider />
 
-                </Comment.Content>
-
-            </Comment>
-        )
-
-        let chatMessageBody = (
-            <Comment.Group minimal>
-                {botTxtMsg}
-                <Divider />
-                {userTxtMsg}
-                <Divider />
-                {botTxtMsg}
-                <Divider />
-                {userTxtMsg}
-                <Divider />
-                {botTxtMsg}
-                <Divider />
-                {userTxtMsg}
-                <Divider />
-                {botTxtMsg}
-            </Comment.Group>
-        )
-
-        let messageBody = chatMessageBody
+                        </Comment>
+                    )
+                }
+                return ''
+            })
+        }
 
         return (
             <Segment className="handle" style={{ 
@@ -103,7 +97,9 @@ class ChatboxBody extends Component {
                 borderRadius: '0',
                 margin: '0'
             }}>
-                {messageBody}
+                <Comment.Group minimal>
+                    {renderbody}
+                </Comment.Group>
             </Segment>
         )
     }
