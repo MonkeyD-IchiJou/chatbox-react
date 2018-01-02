@@ -8,6 +8,9 @@ import SocketConnect from './socketapi'
 import {
     setAppLoading_act
 } from './actions/envActions'*/
+import {
+    pushMsg_act
+} from './actions/msgActions'
 import Chatbox from './components/Chatbox'
 
 class App extends Component {
@@ -72,16 +75,17 @@ class App extends Component {
 
             chatbotSocket.subscribe('client_joined', (data) => {
                 // client successfully joined the room liao
+                this.emitMsgToChatbot('hello', true) // init client say hello to my chatbot here
             })
 
             chatbotSocket.subscribe('chatbot_send_client', (data) => {
                 // receiving msg from chatbot
-                console.log(data)
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: data.msg }))
             })
         })
     }
 
-    emitMsgToChatbot = (msg) => {
+    emitMsgToChatbot = (msg, nodispatch) => {
         let chatbotSocket = this.state.chatbotSocket
 
         if (chatbotSocket.socket.connected) {
@@ -89,7 +93,10 @@ class App extends Component {
             chatbotSocket.socketEmit('client_send_chatbot', {
                 msg: msg
             })
-            // update ui component
+
+            if (!nodispatch) {
+                this.props.dispatch(pushMsg_act({from: 'user', msg: msg}))
+            }
         }
     }
 
@@ -119,7 +126,7 @@ class App extends Component {
         }
 
         return (
-            <Chatbox sendMsg={this.emitMsgToChatbot}/>
+            <Chatbox sendMsg={this.emitMsgToChatbot} allMsgs={this.props.msgReducer}/>
         )
     }
 }
@@ -127,7 +134,8 @@ class App extends Component {
 const mapStateToProps = (state) => {
     return {
         envReducer: state.envReducer,
-        userReducer: state.userReducer
+        userReducer: state.userReducer,
+        msgReducer: state.msgReducer
     }
 }
 
