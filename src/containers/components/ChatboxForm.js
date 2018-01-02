@@ -1,13 +1,26 @@
 import React, { Component } from 'react'
-import { Segment, Form, Input } from 'semantic-ui-react'
+import { Segment, Form } from 'semantic-ui-react'
 
 class ChatboxForm extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            msg: '',
+            submittedMsg: '',
+        }
+    }
+
+    handleChange = (e, { name, value }) => this.setState({ [name]: value })
+
     handleSubmit = () => {
-        console.log('submit liao')
+        const { msg } = this.state
+        this.setState({ submittedMsg: msg, msg: '' })
+        this.props.sendMsg(msg)
     }
 
     render() {
+        const { msg } = this.state
         return (
             <Segment style={{
                 borderRadius: '0',
@@ -15,14 +28,9 @@ class ChatboxForm extends Component {
                 padding: '5px'
             }}>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Field>
-                        <Input
-                            size='small'
-                            placeholder='Type here...'
-                            icon='send'
-                        />
-                    </Form.Field>
+                    <Form.Input required name='msg' placeholder='Type here...' icon='send' onChange={this.handleChange} value={msg}/>
                 </Form>
+
             </Segment>
         )
     }
