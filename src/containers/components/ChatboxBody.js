@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Icon, Segment, Comment, Divider } from 'semantic-ui-react'
+import {Icon, Segment, Comment, Divider, Button, Image } from 'semantic-ui-react'
 
 class ChatboxBody extends Component {
 
@@ -45,6 +45,38 @@ class ChatboxBody extends Component {
                     )
                 }
                 else if (msg.from === 'bot') {
+
+                    let msgii = 0
+                    let msgrender = msg.msg.map((eachmsg) => {
+                        msgii++
+                        let msgsplit = eachmsg.split(":")
+                        let msgheader = msgsplit[0]
+
+                        // button is number
+                        if (!isNaN(msgheader)) {
+                            let buttonmsg = msgsplit[1].split('(')
+                            let buttonname = buttonmsg[0]
+                            let buttonpayload = buttonmsg[1].split(')')[0]
+                            return (
+                            <Button key={msgii} onClick={() => { console.log(buttonpayload) }} style={{marginTop: '10px'}}>
+                                {buttonname}
+                            </Button>
+                            )
+                        }
+                        else {
+                            if(msgheader === 'Image') {
+                                // check whether is an image or not
+                                return (
+                                    <Image key={msgii} src={eachmsg.slice(7)} size='small' style={{ marginTop: '10px' }}/>
+                                )
+                            }
+                            else {
+                                // just a normal txt
+                                return (<div key={msgii}>{msgheader}</div>)
+                            }
+                        }
+                    })
+
                     return (
                         <Comment key={ii}>
 
@@ -64,7 +96,7 @@ class ChatboxBody extends Component {
                                     <div>Today at 5:42PM</div>
                                 </Comment.Metadata>
 
-                                <Comment.Text>{msg.msg[0]}</Comment.Text>
+                                <Comment.Text>{msgrender}</Comment.Text>
 
                                 <Comment.Actions>
                                     <Comment.Action style={{ margin: '0' }}>
