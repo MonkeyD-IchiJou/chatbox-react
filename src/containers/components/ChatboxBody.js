@@ -18,6 +18,7 @@ class ChatboxBody extends Component {
     render() {
         const allMsgs = this.props.allMsgs
         let renderbody = ''
+
         if (allMsgs.length > 0) {
             renderbody = allMsgs.map((msg, index) => {
 
@@ -64,9 +65,7 @@ class ChatboxBody extends Component {
                 }
                 else if (msg.from === 'bot') {
 
-                    let msgii = 0
-                    let msgrender = msg.msg.map((eachmsg) => {
-                        msgii++
+                    let msgrender = msg.msg.map((eachmsg, index) => {
                         let msgsplit = eachmsg.split(":")
                         let msgheader = msgsplit[0]
 
@@ -76,7 +75,7 @@ class ChatboxBody extends Component {
                             let buttonname = buttonmsg[0]
                             let buttonpayload = buttonmsg[1].split(')')[0]
                             return (
-                                <Button key={msgii} onClick={() => { this.props.handleButtonClick(buttonpayload) }} style={{marginTop: '10px'}}>
+                                <Button key={index} onClick={() => { this.props.handleButtonClick(buttonpayload) }} style={{marginTop: '10px'}}>
                                     {buttonname}
                                 </Button>
                             )
@@ -85,12 +84,12 @@ class ChatboxBody extends Component {
                             if(msgheader === 'Image') {
                                 // check whether is an image or not
                                 return (
-                                    <Image key={msgii} src={eachmsg.slice(7)} size='small' style={{ marginTop: '10px' }}/>
+                                    <Image key={index} src={eachmsg.slice(7)} size='small' style={{ marginTop: '10px' }}/>
                                 )
                             }
                             else {
                                 // just a normal txt
-                                return (<div key={msgii}>{msgheader}</div>)
+                                return (<div key={index}>{msgheader}</div>)
                             }
                         }
                     })
