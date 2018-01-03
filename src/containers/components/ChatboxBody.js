@@ -3,16 +3,34 @@ import {Icon, Segment, Comment, Divider, Button, Image } from 'semantic-ui-react
 
 class ChatboxBody extends Component {
 
+    componentDidMount() {
+        this.scrollToBottom()
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom()
+    }
+
+    scrollToBottom() {
+        this.el.scrollTop = this.el.scrollHeight
+    }
+
     render() {
         const allMsgs = this.props.allMsgs
         let renderbody = ''
         if (allMsgs.length > 0) {
-            let ii = 0
-            renderbody = allMsgs.map((msg) => {
-                ii++
+            renderbody = allMsgs.map((msg, index) => {
+
+                let dividermah = <Divider />
+
+                if (allMsgs.length-1 === index) {
+                    // if it is the last msg, then no need to add Divider
+                    dividermah = ''
+                }
+
                 if (msg.from === 'user') {
                     return (
-                        <Comment key={ii}>
+                        <Comment key={index}>
 
                             <Comment.Avatar
                                 as={Icon}
@@ -39,7 +57,7 @@ class ChatboxBody extends Component {
 
                             </Comment.Content>
 
-                            <Divider />
+                            {dividermah}
 
                         </Comment>
                     )
@@ -58,9 +76,9 @@ class ChatboxBody extends Component {
                             let buttonname = buttonmsg[0]
                             let buttonpayload = buttonmsg[1].split(')')[0]
                             return (
-                            <Button key={msgii} onClick={() => { console.log(buttonpayload) }} style={{marginTop: '10px'}}>
-                                {buttonname}
-                            </Button>
+                                <Button key={msgii} onClick={() => { this.props.handleButtonClick(buttonpayload) }} style={{marginTop: '10px'}}>
+                                    {buttonname}
+                                </Button>
                             )
                         }
                         else {
@@ -78,7 +96,7 @@ class ChatboxBody extends Component {
                     })
 
                     return (
-                        <Comment key={ii}>
+                        <Comment key={index}>
 
                             <Comment.Avatar
                                 as={Icon}
@@ -111,7 +129,7 @@ class ChatboxBody extends Component {
                                 </Comment.Actions>
 
                             </Comment.Content>
-                            <Divider />
+                            {dividermah}
 
                         </Comment>
                     )
@@ -121,7 +139,7 @@ class ChatboxBody extends Component {
         }
 
         return (
-            <Segment className="handle" style={{ 
+            <div ref={el => { this.el = el }} className="handle" style={{
                 maxHeight: this.props.maxHeight,
                 minHeight: this.props.minHeight,
                 minWidth: '350px',
@@ -129,10 +147,17 @@ class ChatboxBody extends Component {
                 borderRadius: '0',
                 margin: '0'
             }}>
-                <Comment.Group minimal>
-                    {renderbody}
-                </Comment.Group>
-            </Segment>
+                <Segment style={{
+                    minHeight: this.props.minHeight,
+                    minWidth: '350px',
+                    borderRadius: '0',
+                    margin: '0'
+                }}>
+                    <Comment.Group minimal>
+                        {renderbody}
+                    </Comment.Group>
+                </Segment>
+            </div>
         )
     }
 }
