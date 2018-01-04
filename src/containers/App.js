@@ -55,7 +55,7 @@ class App extends Component {
 
     componentWillUnmount() {
         // disconnect 
-        this.disconnectChatbotSocket()
+        this.state.chatbotSocket.disconnectSocket()
     }
 
     connectChatbotSocket = () => {
