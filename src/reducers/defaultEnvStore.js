@@ -1,5 +1,14 @@
+let productionMah = false
+let backendUrl = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port
+
+if(!productionMah) {
+    // if is in development mode
+    backendUrl = 'https://localhost'
+    console.log('in development', backendUrl)
+}
+
 let defaultEnvStore = {
-    backendUrl: 'https://localhost', // server url to connect to
+    backendUrl: backendUrl, // server url to connect to
     apploading: false, // app loading state
     livechatId: '', // livechat uuid
     chatbotId: '', // chatbot uuid
