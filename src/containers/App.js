@@ -12,6 +12,7 @@ import {
     pushMsg_act
 } from './actions/msgActions'
 import Chatbox from './components/Chatbox'
+import request from 'superagent'
 
 class App extends Component {
 
@@ -75,7 +76,7 @@ class App extends Component {
 
             chatbotSocket.subscribe('client_joined', (data) => {
                 // client successfully joined the room liao
-                this.emitMsgToChatbot('hello', true) // init client say hello to my chatbot here
+                this.emitMsgToChatbot('hello')
             })
 
             chatbotSocket.subscribe('chatbot_send_client', (data) => {
@@ -86,18 +87,28 @@ class App extends Component {
     }
 
     emitMsgToChatbot = (msg, nodispatch) => {
-        let chatbotSocket = this.state.chatbotSocket
 
-        if (chatbotSocket.socket.connected) {
-            // if connected to my socket server and joined the room liao
-            chatbotSocket.socketEmit('client_send_chatbot', {
-                msg: msg
+        let envReducer = this.props.envReducer
+
+        request
+            .post(envReducer.backendUrl + '/chatbot/v1/query')
+            .set('contentType', 'application/json; charset=utf-8')
+            .set('dataType', 'json')
+            .send({
+                uuid: envReducer.chatbotId,
+                text_message: msg,
+                sender_id: this.state.chatbotSocket.socket.id
+            })
+            .end((err, res2) => {
+                if (err) {
+                    console.error(err.toString())
+                }
+                // receiving msg from chatbot
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: res2.body }))
             })
 
-            if (!nodispatch) {
-                this.props.dispatch(pushMsg_act({from: 'user', msg: msg}))
-            }
-        }
+        this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
+
     }
 
     render() {
