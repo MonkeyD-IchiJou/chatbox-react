@@ -35,9 +35,12 @@ class App extends Component {
             case 'CHATBOT':
                 // chatbot only, connect to my chatbot socket server pls
                 this.connectChatbotSocket()
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: ['Hi, I am NEC Chatbot, how may I assist you today?']}))
                 break
 
             case 'LIVECHAT':
+                // livechat only, connect to my livechat socket server pls
+                this.connectLivechatSocket()
                 break
 
             case 'CHATBOT_LIVECHAT':
@@ -57,9 +60,54 @@ class App extends Component {
     componentWillUnmount() {
         // disconnect 
         this.state.chatbotSocket.disconnectSocket()
+        this.state.livechatSocket.disconnectSocket()
+    }
+
+    connectLivechatSocket = () => {
+
+        // disconnect the previous live chat if exist
+        let envReducer = this.props.envReducer
+        let livechatSocket = this.state.livechatSocket
+
+        livechatSocket.disconnectSocket()
+
+        // if have livechatId...
+        // try to connect with my livechat socket server
+        livechatSocket.connectSocket(envReducer.backendUrl + '/lcIO')
+
+        // live chat socket subscribtions
+        livechatSocket.subscribe('connect', () => {
+
+            // asking to join room
+            livechatSocket.socketEmit('client_join_room', {
+                roomId: envReducer.livechatId,
+                username: livechatSocket.socket.id,
+                message: 'userReducer.userproblem',
+                attentionLevel: 1
+            })
+
+            livechatSocket.subscribe('client_joined', (data) => {
+
+                console.log('connected liao')
+
+            })
+
+            // waiting for admin to send me some msg
+            livechatSocket.subscribe('client_receiving_msg', (data) => {
+                //currentAdmin = data.adminUsername
+                //console.log(currentAdmin)
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: [data.msg] }))
+            })
+
+        })
+
     }
 
     connectChatbotSocket = () => {
+
+        // disconnect the chatbot socket if exist
+        this.state.chatbotSocket.disconnectSocket()
+
         let envReducer = this.props.envReducer
         let chatbotSocket = this.state.chatbotSocket
 
@@ -76,7 +124,7 @@ class App extends Component {
 
             chatbotSocket.subscribe('client_joined', (data) => {
                 // client successfully joined the room liao
-                this.emitMsgToChatbot('hello')
+                //this.emitMsgToChatbot('what can you do?')
             })
 
             chatbotSocket.subscribe('chatbot_send_client', (data) => {
@@ -88,7 +136,7 @@ class App extends Component {
 
     emitMsgToChatbot = (msg, nodispatch) => {
 
-        let envReducer = this.props.envReducer
+        /*let envReducer = this.props.envReducer
 
         request
             .post(envReducer.backendUrl + '/chatbot/v1/query')
@@ -105,10 +153,60 @@ class App extends Component {
                 }
                 // receiving msg from chatbot
                 this.props.dispatch(pushMsg_act({ from: 'bot', msg: res2.body }))
+            })*/
+
+
+
+
+        // request to api.ai
+        request
+            .get('https://api.api.ai/v1/query')
+            .timeout({ deadline: 60000 })
+            .set('Authorization', 'Bearer 68c79635022b490088f854e0cf420154')
+            .query({
+                v: 20150910,
+                query: msg,
+                lang: 'en',
+                sessionId: this.state.chatbotSocket.socket.id
+            })
+            .on('error', (err) => { console.log('[/query][error] -> ' + err) })
+            .end((err, res) => {
+
+                if (err) {
+                    console.log('[/query][info] -> ' + err)
+                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: [err] }))
+                }
+                else {
+                    try {
+                        let fulfillment = res.body.result.fulfillment
+                        if (fulfillment.speech) {
+                            // for smalltalk
+                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: [fulfillment.speech] }))
+                        }
+                        else {
+                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: fulfillment.messages[0].payload.msg }))
+                        }
+                    }
+                    catch (err) {
+                        this.props.dispatch(pushMsg_act({ from: 'bot', msg: [err.toString()] }))
+                    }
+                }
+
             })
 
         this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
 
+    }
+
+    emitMsgToLivechatSocket = (msg) => {
+        // emit to live chat socket server about this updated username and problem
+        this.state.livechatSocket.socketEmit('client_send_admin_msg', {
+            clientSocketId: this.state.livechatSocket.socket.id,
+            clientUsername: this.state.livechatSocket.socket.id,
+            adminUsername: 'currentAdmin',
+            msg: msg
+        })
+        this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
     }
 
     render() {
