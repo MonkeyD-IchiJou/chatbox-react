@@ -1,7 +1,6 @@
-let productionMah = false
 let backendUrl = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port
 
-if(!productionMah) {
+if (process.env.NODE_ENV === 'development') {
     // if is in development mode
     backendUrl = 'https://localhost'
     console.log('in development', backendUrl)
