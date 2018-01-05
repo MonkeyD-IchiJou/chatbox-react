@@ -109,7 +109,7 @@ class Chatbox extends Component {
                                         padding: '0px'
                                     }}
                                 >
-                                    <ChatboxBody minHeight={'400px'} maxHeight={'400px'} allMsgs={this.props.allMsgs} handleButtonClick={this.handleButtonClick}/>
+                                    <ChatboxBody maxWidth={'360px'} minHeight={'400px'} maxHeight={'400px'} allMsgs={this.props.allMsgs} handleButtonClick={this.handleButtonClick}/>
                                     <ChatboxForm sendMsg={this.props.sendMsg}/>
                                 </Accordion.Content>
 
