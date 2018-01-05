@@ -19,6 +19,18 @@ class ChatboxBody extends Component {
         const allMsgs = this.props.allMsgs
         let renderbody = ''
 
+        let botAvatar = (
+            <Comment.Avatar
+                as={Icon}
+                inverted
+                color='black'
+                size='large'
+                name='spy'
+            />
+        )
+
+        botAvatar = (<Comment.Avatar as={Image} src='https://udger.com/pub/img/brand/nec_big.png' size='large'/>)
+
         if (allMsgs.length > 0) {
             renderbody = allMsgs.map((msg, index) => {
 
@@ -35,7 +47,6 @@ class ChatboxBody extends Component {
 
                             <Comment.Avatar
                                 as={Icon}
-                                color='teal'
                                 size='large'
                                 name='user'
                             />
@@ -97,17 +108,11 @@ class ChatboxBody extends Component {
                     return (
                         <Comment key={index}>
 
-                            <Comment.Avatar
-                                as={Icon}
-                                inverted
-                                color='black'
-                                size='large'
-                                name='spy'
-                            />
+                            {botAvatar}
 
                             <Comment.Content>
 
-                                <Comment.Author as={'a'}>Matt</Comment.Author>
+                                <Comment.Author as={'a'}>Chatbot</Comment.Author>
 
                                 <Comment.Metadata>
                                     <div>Today at 5:42PM</div>
@@ -142,6 +147,7 @@ class ChatboxBody extends Component {
                 maxHeight: this.props.maxHeight,
                 minHeight: this.props.minHeight,
                 minWidth: '350px',
+                maxWidth: this.props.maxWidth,
                 overflowY: 'auto',
                 borderRadius: '0',
                 margin: '0'
@@ -149,6 +155,7 @@ class ChatboxBody extends Component {
                 <Segment style={{
                     minHeight: this.props.minHeight,
                     minWidth: '350px',
+                    maxWidth: this.props.maxWidth,
                     borderRadius: '0',
                     margin: '0'
                 }}>
