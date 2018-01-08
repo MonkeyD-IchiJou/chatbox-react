@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import SocketConnect from './socketapi'
-/*import {
-    usrReqChatbot_act,
-    usrReqLivechat_act
-} from './actions/userActions'
 import {
+    usrReqLivechat_act,
+    usrUpdateInfo_act
+} from './actions/userActions'
+/*import {
     setAppLoading_act
 } from './actions/envActions'*/
 import {
@@ -39,8 +39,8 @@ class App extends Component {
                 break
 
             case 'LIVECHAT':
-                // livechat only, connect to my livechat socket server pls
-                this.connectLivechatSocket()
+                // livechat only
+                this.props.dispatch(usrReqLivechat_act())
                 break
 
             case 'CHATBOT_LIVECHAT':
@@ -65,10 +65,11 @@ class App extends Component {
 
     connectLivechatSocket = () => {
 
-        // disconnect the previous live chat if exist
         let envReducer = this.props.envReducer
+        let userReducer = this.props.userReducer
         let livechatSocket = this.state.livechatSocket
 
+        // disconnect the previous live chat if exist
         livechatSocket.disconnectSocket()
 
         // if have livechatId...
@@ -81,15 +82,13 @@ class App extends Component {
             // asking to join room
             livechatSocket.socketEmit('client_join_room', {
                 roomId: envReducer.livechatId,
-                username: livechatSocket.socket.id,
-                message: 'userReducer.userproblem',
+                username: userReducer.username,
+                message: userReducer.problem,
                 attentionLevel: 1
             })
 
             livechatSocket.subscribe('client_joined', (data) => {
-
-                console.log('connected liao')
-
+                console.log('connect livechat liao')
             })
 
             // waiting for admin to send me some msg
@@ -209,6 +208,13 @@ class App extends Component {
         this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
     }
 
+    setUserInfo = (username, email, problem) => {
+        this.props.dispatch(usrUpdateInfo_act(username, email, problem)).then((result)=>{
+            // connect to livechat after updating the userinfo
+            this.connectLivechatSocket()
+        })
+    }
+
     render() {
 
         let envReducer = this.props.envReducer
@@ -217,26 +223,40 @@ class App extends Component {
         switch (chatboxMode) {
             case 'CHATBOT':
                 // only chatbot
-
-                break
+                return (
+                    <Chatbox 
+                        sendMsg={this.emitMsgToChatbot}
+                        allMsgs={this.props.msgReducer}
+                        chatboxMode={chatboxMode}
+                        setUserInfo={this.setUserInfo}
+                    />
+                )
 
             case 'LIVECHAT':
                 // straight away show the live chat form at the very begining pls
-
-                break
+                return (
+                    <Chatbox 
+                        sendMsg={this.emitMsgToLivechatSocket}
+                        allMsgs={this.props.msgReducer}
+                        chatboxMode={chatboxMode}
+                        setUserInfo={this.setUserInfo}
+                        userReducer={this.props.userReducer}
+                    />
+                )
 
             case 'CHATBOT_LIVECHAT':
                 // chatbot first.. then if user want live chat.. then submit messages to live chat people
-
-                break
+                return (
+                    <Chatbox sendMsg={this.emitMsgToChatbot} allMsgs={this.props.msgReducer} />
+                )
 
             default:
-                break
+                return (
+                    <Chatbox sendMsg={this.emitMsgToChatbot} allMsgs={this.props.msgReducer} />
+                )
+
         }
 
-        return (
-            <Chatbox sendMsg={this.emitMsgToChatbot} allMsgs={this.props.msgReducer}/>
-        )
     }
 }
 
