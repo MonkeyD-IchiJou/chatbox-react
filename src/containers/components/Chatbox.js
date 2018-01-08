@@ -39,6 +39,22 @@ class Chatbox extends Component {
         let mobileBoxStyle = {}
         let axis = ''
 
+        let chatboxMode = this.props.chatboxMode
+        let showLiveChatForm = false
+
+        if (chatboxMode === 'LIVECHAT') {
+
+            // if the chatboxMode is livechat only
+            let userReducer = this.props.userReducer
+
+            if (!userReducer.username && !userReducer.email && !userReducer.problem) {
+                // user need to identify himself
+                // show the livechat form instead of msgs
+                showLiveChatForm = true
+            }
+
+        }
+
         if (headerCollapse) {
             headerStyle = (
                 <div style={{
@@ -85,6 +101,7 @@ class Chatbox extends Component {
                     <Draggable
                         handle=".handle"
                         axis = {axis}
+                        cancel=".cancelpls"
                     >
                         <div style={defaultBoxStyle}>
                             
@@ -109,7 +126,16 @@ class Chatbox extends Component {
                                         padding: '0px'
                                     }}
                                 >
-                                    <ChatboxBody maxWidth={'360px'} minHeight={'400px'} maxHeight={'400px'} allMsgs={this.props.allMsgs} handleButtonClick={this.handleButtonClick}/>
+                                    <ChatboxBody 
+                                        maxWidth={'360px'} 
+                                        minHeight={'400px'} 
+                                        maxHeight={'400px'} 
+                                        allMsgs={this.props.allMsgs} 
+                                        handleButtonClick={this.handleButtonClick}
+                                        chatboxMode={chatboxMode}
+                                        setUserInfo={this.props.setUserInfo}
+                                        showLiveChatForm={showLiveChatForm}
+                                    />
                                     <ChatboxForm sendMsg={this.props.sendMsg}/>
                                 </Accordion.Content>
 
@@ -148,6 +174,9 @@ class Chatbox extends Component {
                                     minHeight={this.state.windowHeight.toString() + 'px'}
                                     allMsgs={this.props.allMsgs}
                                     handleButtonClick={this.handleButtonClick}
+                                    chatboxMode={chatboxMode}
+                                    setUserInfo={this.props.setUserInfo}
+                                    showLiveChatForm={showLiveChatForm}
                                 />
                                 <ChatboxForm sendMsg={this.props.sendMsg}/>
                             </Accordion.Content>
