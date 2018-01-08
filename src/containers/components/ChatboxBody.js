@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {Icon, Segment, Comment, Divider, Button, Image } from 'semantic-ui-react'
+import LivechatFormBody from './LivechatFormBody'
 
 class ChatboxBody extends Component {
 
@@ -31,8 +32,9 @@ class ChatboxBody extends Component {
 
         botAvatar = (<Comment.Avatar as={Image} src='https://udger.com/pub/img/brand/nec_big.png' size='large'/>)
 
+        let allMsgsRender = ''
         if (allMsgs.length > 0) {
-            renderbody = allMsgs.map((msg, index) => {
+            allMsgsRender = allMsgs.map((msg, index) => {
 
                 let dividermah = <Divider />
 
@@ -142,6 +144,21 @@ class ChatboxBody extends Component {
             })
         }
 
+        renderbody = (
+            <Comment.Group minimal>
+                {allMsgsRender}
+            </Comment.Group>
+        )
+
+        if (this.props.showLiveChatForm) {
+            // if request to show livechat form
+            renderbody = (
+                <div className="cancelpls">
+                    <LivechatFormBody setUserInfo={this.props.setUserInfo}/>
+                </div>
+            )
+        }
+
         return (
             <div ref={el => { this.el = el }} className="handle" style={{
                 maxHeight: this.props.maxHeight,
@@ -159,9 +176,7 @@ class ChatboxBody extends Component {
                     borderRadius: '0',
                     margin: '0'
                 }}>
-                    <Comment.Group minimal>
-                        {renderbody}
-                    </Comment.Group>
+                    {renderbody}
                 </Segment>
             </div>
         )
