@@ -5,13 +5,14 @@ import promiseMiddleware from 'redux-promise-middleware'
 import envReducer from './reducers/envReducer'
 import userReducer from './reducers/userReducer'
 import msgReducer from './reducers/msgReducer'
+import adminReducer from './reducers/adminReducer'
 
 const logger = createLogger({
     collapsed: true
 })
 
 export default createStore(
-    combineReducers({ envReducer, userReducer, msgReducer }),
+    combineReducers({ envReducer, userReducer, msgReducer, adminReducer }),
     {},
     applyMiddleware(logger, thunk, promiseMiddleware())
 )
