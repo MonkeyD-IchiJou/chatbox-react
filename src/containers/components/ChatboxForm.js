@@ -28,7 +28,7 @@ class ChatboxForm extends Component {
                 padding: '5px'
             }}>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input required name='msg' placeholder='Type here...' icon='send' onChange={this.handleChange} value={msg}/>
+                    <Form.Input required name='msg' placeholder='Type here...' icon='send' onChange={this.handleChange} value={msg} disabled={this.props.waitingForAdmin}/>
                 </Form>
 
             </Segment>
