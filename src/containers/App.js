@@ -5,6 +5,9 @@ import {
     usrReqLivechat_act,
     usrUpdateInfo_act
 } from './actions/userActions'
+import {
+    setAdminInfo_act
+} from './actions/adminActions'
 /*import {
     setAppLoading_act
 } from './actions/envActions'*/
@@ -88,14 +91,12 @@ class App extends Component {
             })
 
             livechatSocket.subscribe('client_joined', (data) => {
-                console.log('connect livechat liao')
             })
 
             // waiting for admin to send me some msg
             livechatSocket.subscribe('client_receiving_msg', (data) => {
-                //currentAdmin = data.adminUsername
-                //console.log(currentAdmin)
                 this.props.dispatch(pushMsg_act({ from: 'bot', msg: [data.msg] }))
+                this.props.dispatch(setAdminInfo_act(data.adminUsername))
             })
 
         })
@@ -201,8 +202,8 @@ class App extends Component {
         // emit to live chat socket server about this updated username and problem
         this.state.livechatSocket.socketEmit('client_send_admin_msg', {
             clientSocketId: this.state.livechatSocket.socket.id,
-            clientUsername: this.state.livechatSocket.socket.id,
-            adminUsername: 'currentAdmin',
+            clientUsername: this.props.userReducer.userReducer,
+            adminUsername: this.props.adminReducer.adminName,
             msg: msg
         })
         this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
@@ -218,6 +219,7 @@ class App extends Component {
     render() {
 
         let envReducer = this.props.envReducer
+        let adminReducer = this.props.adminReducer
         let chatboxMode = envReducer.chatboxMode
 
         switch (chatboxMode) {
@@ -241,6 +243,7 @@ class App extends Component {
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
                         userReducer={this.props.userReducer}
+                        adminReducer={adminReducer}
                     />
                 )
 
@@ -264,7 +267,8 @@ const mapStateToProps = (state) => {
     return {
         envReducer: state.envReducer,
         userReducer: state.userReducer,
-        msgReducer: state.msgReducer
+        msgReducer: state.msgReducer,
+        adminReducer: state.adminReducer
     }
 }
 
