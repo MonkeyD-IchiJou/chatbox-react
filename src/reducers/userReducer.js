@@ -26,6 +26,23 @@ const userReducer = (
             }
             break
 
+        case "SET_USER_INFO":
+            state = {
+                ...state,
+                requestChatbot: true,
+                requestLivechat: false
+            }
+            break
+
+        case "SET_USER_INFO_FULFILLED":
+            state = {
+                ...state,
+                username: action.payload.username,
+                email: action.payload.email,
+                problem: action.payload.problem
+            }
+            break
+
         default:
             break
     }
