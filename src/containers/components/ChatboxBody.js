@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Icon, Segment, Comment, Divider, Button, Image } from 'semantic-ui-react'
+import { Icon, Segment, Comment, Divider, Button, Image, Dimmer, Loader } from 'semantic-ui-react'
 import LivechatFormBody from './LivechatFormBody'
 
 class ChatboxBody extends Component {
@@ -149,6 +149,14 @@ class ChatboxBody extends Component {
                 {allMsgsRender}
             </Comment.Group>
         )
+
+        if(this.props.waitingForAdmin) {
+            renderbody = (
+                <Dimmer active inverted>
+                    <Loader inverted>Searching for a live agent</Loader>
+                </Dimmer>
+            )
+        }
 
         if (this.props.showLiveChatForm) {
             // if request to show livechat form
