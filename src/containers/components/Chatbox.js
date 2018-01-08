@@ -41,16 +41,28 @@ class Chatbox extends Component {
 
         let chatboxMode = this.props.chatboxMode
         let showLiveChatForm = false
+        let waitingForAdmin = false
 
         if (chatboxMode === 'LIVECHAT') {
 
             // if the chatboxMode is livechat only
             let userReducer = this.props.userReducer
+            let adminReducer = this.props.adminReducer
 
             if (!userReducer.username && !userReducer.email && !userReducer.problem) {
                 // user need to identify himself
                 // show the livechat form instead of msgs
                 showLiveChatForm = true
+            }
+
+            if (adminReducer.adminName) {
+                // if adminName and adminId are presents
+                // then user can start to type message to admin
+                waitingForAdmin = false
+            }
+            else {
+                // user are not able to type message to admin, and chatbox body is loading
+                waitingForAdmin = true
             }
 
         }
@@ -135,8 +147,9 @@ class Chatbox extends Component {
                                         chatboxMode={chatboxMode}
                                         setUserInfo={this.props.setUserInfo}
                                         showLiveChatForm={showLiveChatForm}
+                                        waitingForAdmin={waitingForAdmin}
                                     />
-                                    <ChatboxForm sendMsg={this.props.sendMsg}/>
+                                    <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
                                 </Accordion.Content>
 
                             </Accordion>
@@ -177,8 +190,9 @@ class Chatbox extends Component {
                                     chatboxMode={chatboxMode}
                                     setUserInfo={this.props.setUserInfo}
                                     showLiveChatForm={showLiveChatForm}
+                                    waitingForAdmin={waitingForAdmin}
                                 />
-                                <ChatboxForm sendMsg={this.props.sendMsg}/>
+                                <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
                             </Accordion.Content>
 
                         </Accordion>
