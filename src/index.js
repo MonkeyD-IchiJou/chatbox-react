@@ -21,6 +21,13 @@ window.RenderApp = function (chatbotId, livechatId) {
         defaultEnvStore.chatboxMode = 'CHATBOT_LIVECHAT'
     }
 
+    // tmp, delete in production mode pls
+    //defaultEnvStore.chatboxMode = 'CHATBOT'
+    //defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
+
+    //defaultEnvStore.chatboxMode = 'LIVECHAT'
+    //defaultEnvStore.livechatId = 'QRdCHThaReh4vgQwuqN71LWBopF12ufXRAfcoSvzMGLRM7Cn6'
+
     new ReactDOM.render(
         <Provider store={store}>
             <App/>

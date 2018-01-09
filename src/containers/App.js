@@ -162,7 +162,7 @@ class App extends Component {
         request
             .get('https://api.api.ai/v1/query')
             .timeout({ deadline: 60000 })
-            .set('Authorization', 'Bearer 68c79635022b490088f854e0cf420154')
+            .set('Authorization', 'Bearer a1ba0f8c5f254cb3920266e08d76237a')
             .query({
                 v: 20150910,
                 query: msg,
