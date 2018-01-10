@@ -231,6 +231,7 @@ class App extends Component {
                         allMsgs={this.props.msgReducer}
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
+                        backendUrl={this.props.envReducer.backendUrl}
                     />
                 )
 
@@ -244,6 +245,7 @@ class App extends Component {
                         setUserInfo={this.setUserInfo}
                         userReducer={this.props.userReducer}
                         adminReducer={adminReducer}
+                        backendUrl={this.props.envReducer.backendUrl}
                     />
                 )
 
