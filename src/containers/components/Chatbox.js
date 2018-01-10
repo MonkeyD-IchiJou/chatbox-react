@@ -148,6 +148,7 @@ class Chatbox extends Component {
                                         setUserInfo={this.props.setUserInfo}
                                         showLiveChatForm={showLiveChatForm}
                                         waitingForAdmin={waitingForAdmin}
+                                        backendUrl={this.props.backendUrl}
                                     />
                                     <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
                                 </Accordion.Content>
@@ -191,6 +192,7 @@ class Chatbox extends Component {
                                     setUserInfo={this.props.setUserInfo}
                                     showLiveChatForm={showLiveChatForm}
                                     waitingForAdmin={waitingForAdmin}
+                                    backendUrl={this.props.backendUrl}
                                 />
                                 <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
                             </Accordion.Content>

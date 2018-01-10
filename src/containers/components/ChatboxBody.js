@@ -96,8 +96,15 @@ class ChatboxBody extends Component {
                         else {
                             if(msgheader === 'Image') {
                                 // check whether is an image or not
+                                let imageUrl = eachmsg.slice(7)
+                                if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
+                                }
+                                else {
+                                    imageUrl = this.props.backendUrl + '/viewfile/' + imageUrl
+                                }
+
                                 return (
-                                    <Image key={index} src={eachmsg.slice(7)} size='small' style={{ marginTop: '10px' }}/>
+                                    <Image key={index} src={imageUrl} size='small' style={{ marginTop: '10px' }}/>
                                 )
                             }
                             else {
