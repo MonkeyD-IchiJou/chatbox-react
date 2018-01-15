@@ -30,7 +30,7 @@ class ChatboxBody extends Component {
             />
         )
 
-        botAvatar = (<Comment.Avatar as={Image} src='https://udger.com/pub/img/brand/nec_big.png' size='large'/>)
+        botAvatar = (<Comment.Avatar as={Image} src={this.props.backendUrl + '/viewfile/avatarpic.png'} size='large'/>)
 
         let allMsgsRender = ''
         if (allMsgs.length > 0) {
