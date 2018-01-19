@@ -136,30 +136,38 @@ class App extends Component {
 
     emitMsgToChatbot = (msg, nodispatch) => {
 
-        /*let envReducer = this.props.envReducer
+        let envReducer = this.props.envReducer
 
         request
             .post(envReducer.backendUrl + '/chatbot/v1/query')
             .set('contentType', 'application/json; charset=utf-8')
             .set('dataType', 'json')
             .send({
-                uuid: envReducer.chatbotId,
-                text_message: msg,
-                sender_id: this.state.chatbotSocket.socket.id
+                text_message: msg
             })
             .end((err, res2) => {
                 if (err) {
                     console.error(err.toString())
                 }
                 // receiving msg from chatbot
-                this.props.dispatch(pushMsg_act({ from: 'bot', msg: res2.body }))
-            })*/
+                let payload = res2.body.cbres.responses[0].messages[0].payload
+                let speech = res2.body.cbres.responses[0].messages[0].speech
 
+                console.log(res2.body.allres)
+                if(payload) {
+                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: payload.msg }))
+                }
+                else if(speech[0]) {
+                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: [speech[0]] }))
+                }
+                else {
+                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: ['Sorry, I could not understand that'] }))
+                }
 
-
+            })
 
         // request to api.ai
-        request
+        /*request
             .get('https://api.api.ai/v1/query')
             .timeout({ deadline: 60000 })
             .set('Authorization', 'Bearer a1ba0f8c5f254cb3920266e08d76237a')
@@ -193,7 +201,7 @@ class App extends Component {
                     }
                 }
 
-            })
+            })*/
 
         this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
 
