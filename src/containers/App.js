@@ -167,7 +167,7 @@ class App extends Component {
                 v: 20150910,
                 query: msg,
                 lang: 'en',
-                sessionId: this.state.chatbotSocket.socket.id
+                sessionId: 12345-678-90 //this.state.chatbotSocket.socket.id
             })
             .on('error', (err) => { console.log('[/query][error] -> ' + err) })
             .end((err, res) => {
@@ -179,12 +179,13 @@ class App extends Component {
                 else {
                     try {
                         let fulfillment = res.body.result.fulfillment
+                        console.log(fulfillment);
                         if (fulfillment.speech) {
                             // for smalltalk
-                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: [fulfillment.speech] }))
+                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: [fulfillment.speech], }))
                         }
                         else {
-                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: fulfillment.messages[0].payload.msg }))
+                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: fulfillment.messages[0].payload.msg, msgtype: fulfillment.messages[0].payload.msgtype, msgheader: fulfillment.messages[0].payload.msgheader }))
                         }
                     }
                     catch (err) {
