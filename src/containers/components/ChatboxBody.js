@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Icon, Segment, Comment, Divider, Button, Image, Dimmer, Loader } from 'semantic-ui-react'
+import { Icon, Segment, Comment, Divider, Image, Dimmer, Loader } from 'semantic-ui-react'
 import LivechatFormBody from './LivechatFormBody'
 
 class ChatboxBody extends Component {
@@ -39,7 +39,6 @@ class ChatboxBody extends Component {
         if (allMsgs.length > 0) {
             allMsgsRender = allMsgs.map((msg, index) => {
 
-               
                 let dividermah = <Divider />
 
                 if (allMsgs.length-1 === index) {
@@ -82,140 +81,17 @@ class ChatboxBody extends Component {
                 }
                 else if (msg.from === 'bot') {
 
-              
-                    let msgrender = msg.msg.map((eachmsg, index) => {
+                    let botmsg = JSON.parse(msg.msg)
+                    let msgrender = ''
 
-                        let msgsplit =''
-                        let msgheader = ''
-                        if (eachmsg==='')
-                        {
-                            msgheader ='EmptyRow'
-                        }
-                        else
-                        {
-                            msgsplit = eachmsg.split(":")
-                            msgheader = msgsplit[0]
-                        }
-      
-                        // button is number
-                        if (!isNaN(msgheader)) {
-                            let buttonmsg = msgsplit[1].split('(')
-                            let buttonname = buttonmsg[0]
-                            let buttonpayload = buttonmsg[1].split(')')[0]
-                            return (
-                                <Button key={index} onClick={() => { this.props.handleButtonClick(buttonpayload) }} style={{marginTop: '10px'}}>
-                                    {buttonname}
-                                </Button>
-                            )
-                        }
-                        else {
-                            if(msgheader === 'Image') {
-                                // check whether is an image or not
-                                let imageUrl = eachmsg.slice(7)
-                                if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
-                                }
-                                else {
-                                    imageUrl = this.props.backendUrl + '/viewfile/' + imageUrl
-                                }
+                    switch (botmsg.type) {
+                        case 'TEXT':
+                            msgrender = botmsg.text
+                            break
 
-                                return (
-                                    <Image key={index} src={imageUrl} size='small' style={{ marginTop: '10px', width: 'auto' }}/>
-                                )
-                            }
-                            else  if(msgheader === 'EmptyRow') {
-                                 return (<div key={index}>&nbsp;</div>)
-                                }
-                            else {
-
-                                   switch(msg.msgtype) {
-                                        case 'list':
-                                        
-                                            if (msgsplit.length>1)
-                                            {
-
-                                                let ulmsg = ''
-                                                let ulname = ''
-                                                let ulpayload = ''
-                                           
-                                                if( (msgheader === 'Url') || (msgheader === 'mailto')) {
-                                                     ulmsg = msgsplit[1].split('(')
-                                                     ulname = ulmsg[0]
-                                                     ulpayload = ulmsg[1].split(')')[0]
-                                                }
-                                                else  {
-                                                    ulmsg = msgsplit[1]
-                                                    ulname = msgsplit[1]
-                                                    ulpayload = msgsplit[1]
-
-                                                }
-                                              
-
-                                                if(msgheader === 'mailto') {
-                                                    ulpayload = "mailto:" + ulpayload
-                                                }
-                                                else
-                                                {
-                                                    switch(ulpayload) {
-                                                        case 'https':
-                                                            ulpayload = ulmsg[1].split(')')[0] + ":" + msgsplit[2].split(')')[0]
-                                                             
-                                                        case 'http' :   
-                                                            ulpayload = ulmsg[1].split(')')[0] + ":" + msgsplit[2].split(')')[0]
-                                                                 
-                                                    }
-                                                }
-
-                                               
-                                                       
-                                            if(msgheader === 'Input') {
-
-                                                return ( 
-                                                    <div>
-                                                        <ul key={index}>
-                                                        <li><a href='#' onClick={() => { this.props.handleButtonClick(ulpayload) }} style={{marginTop: '10px'}}>
-                                                        {ulname}</a></li>
-                                                       
-                                                        </ul>
-                                                    </div>);
-     
-                                            }
-                                            else  if(msgheader === 'mailto') {
-                                                return ( 
-                                                    <div>
-                                                        <ul key={index}>
-                                                        {/* <li><a href='{ulpayload}' onClick={() => { this.props.handleButtonClick(ulpayload) }} style={{marginTop: '10px'}}>
-                                                        {ulname}</a></li> */}
-                                                        <li><a href={ulpayload} style={{marginTop: '10px'}}>
-                                                        {ulname}</a></li>
-                                                        </ul>
-                                                    </div>);
-                                            }
-                                            {
-
-                                                return ( 
-                                                    <div>
-                                                        <ul key={index}>
-                                                        {/* <li><a href='{ulpayload}' onClick={() => { this.props.handleButtonClick(ulpayload) }} style={{marginTop: '10px'}}>
-                                                        {ulname}</a></li> */}
-                                                        <li><a href={ulpayload} target="_blank"  style={{marginTop: '10px'}}>
-                                                        {ulname}</a></li>
-                                                        </ul>
-                                                    </div>);
-     
-                                            }
-
-                                            
-                                            }
-                                                                                       
-                                        default:
-                                           return (<div key={index}>{msgheader}</div>)
-                                        
-                                    }
-
-                               // return (<div key={index}>{msgheader}</div>)
-                            }
-                        }
-                    })
+                        default:
+                            break
+                    }
 
                     return (
                         <Comment key={index}>
