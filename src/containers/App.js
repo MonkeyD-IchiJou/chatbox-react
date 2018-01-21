@@ -38,7 +38,11 @@ class App extends Component {
             case 'CHATBOT':
                 // chatbot only, connect to my chatbot socket server pls
                 this.connectChatbotSocket()
-                this.props.dispatch(pushMsg_act({ from: 'bot', msg: ['Hi, I am NEC Chatbot, how may I assist you today?']}))
+                let botinitmsg = {
+                    type: 'TEXT',
+                    text: 'Hi, I am NEC Chatbot, your virtual assistant. How can I assist you today? Please be patient as I am still learning.'
+                }
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(botinitmsg)}))
                 break
 
             case 'LIVECHAT':
@@ -143,25 +147,28 @@ class App extends Component {
             .set('contentType', 'application/json; charset=utf-8')
             .set('dataType', 'json')
             .send({
-                text_message: msg
+                uuid: envReducer.chatbotId,
+                text_message: msg,
+                sender_id: this.state.chatbotSocket.socket.id
             })
-            .end((err, res2) => {
-                if (err) {
-                    console.error(err.toString())
-                }
-                // receiving msg from chatbot
-                let payload = res2.body.cbres.responses[0].messages[0].payload
-                let speech = res2.body.cbres.responses[0].messages[0].speech
+            .end((err, res) => {
 
-                console.log(res2.body.allres)
-                if(payload) {
-                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: payload.msg }))
-                }
-                else if(speech[0]) {
-                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: [speech[0]] }))
-                }
-                else {
-                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: ['Sorry, I could not understand that'] }))
+                try {
+                    if (err || !res.ok) {
+                        let errormsg = res.body.errors
+                        throw errormsg
+                    }
+                    else {
+                        let result = res.body
+
+                        if (!result) {
+                            throw new Error('no body msg')
+                        }
+
+                        this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.action[0]) }))
+                    }
+                } catch (e) {
+                    console.log(e.toString())
                 }
 
             })
@@ -175,7 +182,7 @@ class App extends Component {
                 v: 20150910,
                 query: msg,
                 lang: 'en',
-                sessionId: 12345-678-90 //this.state.chatbotSocket.socket.id
+                sessionId: this.state.chatbotSocket.socket.id
             })
             .on('error', (err) => { console.log('[/query][error] -> ' + err) })
             .end((err, res) => {
