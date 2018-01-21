@@ -4,7 +4,7 @@ const userReducer = (
         msgtime:'',
         msgtype:'',
         msgheader:'',
-        msg: []
+        msg: ''
     }],
     action
 ) => {
