@@ -22,8 +22,8 @@ window.RenderApp = function (chatbotId, livechatId) {
     }
 
     // tmp, delete in production mode pls
-    //defaultEnvStore.chatboxMode = 'CHATBOT'
-    //defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
+    defaultEnvStore.chatboxMode = 'CHATBOT'
+    defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
 
     //defaultEnvStore.chatboxMode = 'LIVECHAT'
     //defaultEnvStore.livechatId = 'QRdCHThaReh4vgQwuqN71LWBopF12ufXRAfcoSvzMGLRM7Cn6'
