@@ -85,10 +85,10 @@ class Chatbox extends Component {
         else {
             headerStyle = (
                 <div style={{ 
-                    textAlign: 'center',
-                    marginRight: '10px'
+                    marginRight: '10px',
+                    paddingLeft: '10px'
                 }}>
-                    &nbsp;
+                    Ask NEC Chatbot
                     < Icon name='minus' style={{ float: 'right' }} />
                 </div>
             )
