@@ -19,10 +19,11 @@
     "socket.io-client": "^2.0.4",
     "superagent": "^3.8.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build && html2pug < ./build/index.html > ~/Desktop/ChatbotNEC/socketserver/src/views/index.pug && rm -r ~/Desktop/ChatbotNEC/webserver/chatbox/build||: && mv build ~/Desktop/ChatbotNEC/webserver/chatbox/",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject"
+    },
+    "homepage": "http://mywebsite.com/chatbox"
 }
