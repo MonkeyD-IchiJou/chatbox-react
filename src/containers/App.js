@@ -165,7 +165,7 @@ class App extends Component {
                             throw new Error('no body msg')
                         }
 
-                        this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.action[0]) }))
+                        this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.action) }))
                     }
                 } catch (e) {
                     console.log(e.toString())
