@@ -10,6 +10,7 @@ class Chatbox extends Component {
         super(props)
         this.state = {
             headerCollapse: false,
+            sendFormDisabled: false,
             windowHeight: window.innerHeight - 78
         }
     }
@@ -30,6 +31,11 @@ class Chatbox extends Component {
     sendAcknowledgeMsg = (indexToPop) => {
         this.props.popMessage(indexToPop)
         this.props.sendMsg('who are you', true)
+        this.sendFormDisableMah(false)
+    }
+
+    sendFormDisableMah = (val) => {
+        this.setState({sendFormDisabled: val})
     }
 
     render() {
@@ -46,7 +52,7 @@ class Chatbox extends Component {
 
         let chatboxMode = this.props.chatboxMode
         let showLiveChatForm = false
-        let waitingForAdmin = false
+        let sendFormDisabled = this.state.sendFormDisabled
 
         if (chatboxMode === 'LIVECHAT') {
 
@@ -63,11 +69,11 @@ class Chatbox extends Component {
             if (adminReducer.adminName) {
                 // if adminName and adminId are presents
                 // then user can start to type message to admin
-                waitingForAdmin = false
+                this.sendFormDisableMah(false)
             }
             else {
                 // user are not able to type message to admin, and chatbox body is loading
-                waitingForAdmin = true
+                this.sendFormDisableMah(true)
             }
 
         }
@@ -152,11 +158,12 @@ class Chatbox extends Component {
                                         chatboxMode={chatboxMode}
                                         setUserInfo={this.props.setUserInfo}
                                         showLiveChatForm={showLiveChatForm}
-                                        waitingForAdmin={waitingForAdmin}
+                                        sendFormDisabled={sendFormDisabled}
                                         backendUrl={this.props.backendUrl}
                                         sendAcknowledgeMsg={this.sendAcknowledgeMsg}
+                                        sendFormDisableMah={this.sendFormDisableMah}
                                     />
-                                    <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
+                                    <ChatboxForm sendMsg={this.props.sendMsg} sendFormDisabled={sendFormDisabled}/>
                                 </Accordion.Content>
 
                             </Accordion>
@@ -197,11 +204,12 @@ class Chatbox extends Component {
                                     chatboxMode={chatboxMode}
                                     setUserInfo={this.props.setUserInfo}
                                     showLiveChatForm={showLiveChatForm}
-                                    waitingForAdmin={waitingForAdmin}
+                                    sendFormDisabled={sendFormDisabled}
                                     backendUrl={this.props.backendUrl}
                                     sendAcknowledgeMsg={this.sendAcknowledgeMsg}
+                                    sendFormDisableMah={this.sendFormDisableMah}
                                 />
-                                <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
+                                <ChatboxForm sendMsg={this.props.sendMsg} sendFormDisabled={sendFormDisabled}/>
                             </Accordion.Content>
 
                         </Accordion>
