@@ -10,6 +10,10 @@ class ChatbotTmpForm extends Component {
         }
     }
 
+    componentDidMount() {
+        this.props.sendFormDisable()
+    }
+
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
     handleSubmit = () => {

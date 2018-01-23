@@ -17,6 +17,10 @@ class ChatboxBody extends Component {
         this.el.scrollTop = this.el.scrollHeight
     }
 
+    sendFormDisable = () => {
+        this.props.sendFormDisableMah(true)
+    }
+
     render() {
         const allMsgs = this.props.allMsgs
         let renderbody = ''
@@ -117,7 +121,7 @@ class ChatboxBody extends Component {
                                     )
 
                                 case 'TMP':
-                                    return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={this.props.sendAcknowledgeMsg} indexToPop={index}/></div>)
+                                    return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={this.props.sendAcknowledgeMsg} indexToPop={index} sendFormDisable={this.sendFormDisable}/></div>)
 
                                 default:
                                     return (<div key={mindex}>adsf</div>)
@@ -170,12 +174,15 @@ class ChatboxBody extends Component {
             </Comment.Group>
         )
 
-        if(this.props.waitingForAdmin) {
-            renderbody = (
-                <Dimmer active inverted>
-                    <Loader inverted>Searching for a live agent</Loader>
-                </Dimmer>
-            )
+
+        if (this.props.chatboxMode === 'LIVECHAT') {
+            if (this.props.sendFormDisabled) {
+                renderbody = (
+                    <Dimmer active inverted>
+                        <Loader inverted>Searching for a live agent</Loader>
+                    </Dimmer>
+                )
+            }
         }
 
         if (this.props.showLiveChatForm) {

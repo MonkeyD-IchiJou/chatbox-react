@@ -28,7 +28,7 @@ class ChatboxForm extends Component {
                 padding: '5px'
             }}>
                 <Form onSubmit={this.handleSubmit}>
-                    <Input required name='msg' placeholder='Type here...' onChange={this.handleChange} value={msg} disabled={this.props.waitingForAdmin} label={<Button>SEND</Button>} labelPosition='right' fluid/>
+                    <Input required name='msg' placeholder='Type here...' onChange={this.handleChange} value={msg} disabled={this.props.sendFormDisabled} label={<Button>SEND</Button>} labelPosition='right' fluid/>
                 </Form>
 
             </Segment>
