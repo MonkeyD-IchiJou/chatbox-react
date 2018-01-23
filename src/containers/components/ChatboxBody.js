@@ -152,18 +152,6 @@ class ChatboxBody extends Component {
 
                                 <Comment.Text>{msgrender}</Comment.Text>
 
-                                <Comment.Actions>
-                                    <Comment.Action style={{ margin: '0' }}>
-                                        <Icon name='smile' size='large' />
-                                    </Comment.Action>
-                                    <Comment.Action style={{ margin: '0' }}>
-                                        <Icon name='meh' size='large' />
-                                    </Comment.Action>
-                                    <Comment.Action style={{ margin: '0' }}>
-                                        <Icon name='frown' size='large' />
-                                    </Comment.Action>
-                                </Comment.Actions>
-
                             </Comment.Content>
                             {dividermah}
 
@@ -227,6 +215,17 @@ export default ChatboxBody
 
 
 /**
+<Comment.Actions>
+    <Comment.Action style={{ margin: '0' }}>
+        <Icon name='smile' size='large' />
+    </Comment.Action>
+    <Comment.Action style={{ margin: '0' }}>
+        <Icon name='meh' size='large' />
+    </Comment.Action>
+    <Comment.Action style={{ margin: '0' }}>
+        <Icon name='frown' size='large' />
+    </Comment.Action>
+</Comment.Actions>
  * let msgrender = msg.msg.map((eachmsg, index) => {
 
 let msgsplit =''
