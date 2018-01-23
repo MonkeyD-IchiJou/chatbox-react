@@ -12,7 +12,8 @@ import {
     setAppLoading_act
 } from './actions/envActions'*/
 import {
-    pushMsg_act
+    pushMsg_act,
+    popMsg_act
 } from './actions/msgActions'
 import Chatbox from './components/Chatbox'
 import request from 'superagent'
@@ -25,11 +26,20 @@ class App extends Component {
         // storing socket data in my App state locally
         this.state = {
             chatbotSocket: new SocketConnect('chatbotSocket'),
-            livechatSocket: new SocketConnect('livechatSocket')
+            livechatSocket: new SocketConnect('livechatSocket'),
+            intervalId: 0
         }
     }
 
+    timer = () => {
+        this.emitMsgToChatbot('rating', true)
+        clearInterval(this.state.intervalId)
+    }
+
     componentDidMount() {
+
+        var intervalId = setInterval(this.timer, 60000)
+        this.setState({ intervalId: intervalId })
 
         let envReducer = this.props.envReducer
         let chatboxMode = envReducer.chatboxMode
@@ -38,11 +48,6 @@ class App extends Component {
             case 'CHATBOT':
                 // chatbot only, connect to my chatbot socket server pls
                 this.connectChatbotSocket()
-                let botinitmsg = {
-                    type: 'TEXT',
-                    text: 'Hi, I am NEC Chatbot, your virtual assistant. How can I assist you today? Please be patient as I am still learning.'
-                }
-                this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(botinitmsg)}))
                 break
 
             case 'LIVECHAT':
@@ -65,6 +70,7 @@ class App extends Component {
     }
 
     componentWillUnmount() {
+        clearInterval(this.state.intervalId)
         // disconnect 
         this.state.chatbotSocket.disconnectSocket()
         this.state.livechatSocket.disconnectSocket()
@@ -128,7 +134,7 @@ class App extends Component {
 
             chatbotSocket.subscribe('client_joined', (data) => {
                 // client successfully joined the room liao
-                //this.emitMsgToChatbot('what can you do?')
+                this.emitMsgToChatbot('tmp form', true)
             })
 
             chatbotSocket.subscribe('chatbot_send_client', (data) => {
@@ -210,7 +216,11 @@ class App extends Component {
 
             })*/
 
-        this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
+        if(nodispatch === true) {
+        }
+        else {
+            this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
+        }
 
     }
 
@@ -232,6 +242,10 @@ class App extends Component {
         })
     }
 
+    popMessage = (indexToPop) => {
+        this.props.dispatch(popMsg_act(indexToPop))
+    }
+
     render() {
 
         let envReducer = this.props.envReducer
@@ -244,6 +258,7 @@ class App extends Component {
                 return (
                     <Chatbox 
                         sendMsg={this.emitMsgToChatbot}
+                        popMessage={this.popMessage}
                         allMsgs={this.props.msgReducer}
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
@@ -256,6 +271,7 @@ class App extends Component {
                 return (
                     <Chatbox 
                         sendMsg={this.emitMsgToLivechatSocket}
+                        popMessage={this.popMessage}
                         allMsgs={this.props.msgReducer}
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
