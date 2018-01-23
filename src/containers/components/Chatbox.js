@@ -74,7 +74,7 @@ class Chatbox extends Component {
                     marginLeft: '20px'
                 }}>
                     < Icon name='comments' size='large' style={{ paddingRight: '30px', paddingBottom: '25px'}} />
-                    We're Online!
+                    Ask me
                 </div>
             )
 
