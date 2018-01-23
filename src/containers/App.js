@@ -38,7 +38,7 @@ class App extends Component {
 
     componentDidMount() {
 
-        var intervalId = setInterval(this.timer, 60000)
+        var intervalId = setInterval(this.timer, 300000)
         this.setState({ intervalId: intervalId })
 
         let envReducer = this.props.envReducer
