@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Icon, Segment, Comment, Divider, Image, Dimmer, Loader, List } from 'semantic-ui-react'
 import LivechatFormBody from './LivechatFormBody'
+import ChatbotTmpForm from './ChatbotTmpForm'
 
 class ChatboxBody extends Component {
 
@@ -84,11 +85,11 @@ class ChatboxBody extends Component {
 
                     if (Array.isArray(parsedmsg)) {
 
-                        msgrender = parsedmsg.map((eachmsg, index)=>{
+                        msgrender = parsedmsg.map((eachmsg, mindex)=>{
 
                             switch (eachmsg.type) {
                                 case 'TEXT':
-                                    return (<div key={index}>{eachmsg.text}</div>)
+                                    return (<div key={mindex}>{eachmsg.text}</div>)
 
                                 case 'IMG':
                                     let imageUrl = eachmsg.image
@@ -99,12 +100,12 @@ class ChatboxBody extends Component {
                                     }
 
                                     return (
-                                        <Image key={index} src={imageUrl} size='small' style={{ marginTop: '10px', width: 'auto' }} />
+                                        <Image key={mindex} src={imageUrl} size='small' style={{ marginTop: '10px', width: 'auto' }} />
                                     )
 
                                 case 'QR':
                                     return (
-                                        <List key={index} bulleted>
+                                        <List key={mindex} bulleted>
                                             {eachmsg.buttons.map((button, bi) => {
                                                 return (
                                                     <List.Item as='a' key={bi} onClick={() => { this.props.handleButtonClick(button.payload) }} style={{ marginTop: '10px' }}>
@@ -115,8 +116,11 @@ class ChatboxBody extends Component {
                                         </List>
                                     )
 
+                                case 'TMP':
+                                    return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={this.props.sendAcknowledgeMsg} indexToPop={index}/></div>)
+
                                 default:
-                                    return (<div key={index}>adsf</div>)
+                                    return (<div key={mindex}>adsf</div>)
 
                             }
                         })
