@@ -4,3 +4,10 @@ export function pushMsg_act(payload) {
         payload: payload
     }
 }
+
+export function popMsg_act(payload) {
+    return {
+        type: 'POP_MSG',
+        payload: payload
+    }
+}

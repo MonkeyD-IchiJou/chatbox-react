@@ -23,6 +23,13 @@ const userReducer = (
             })
             break
 
+        case "POP_MSG":
+            state = [
+                ...state
+            ]
+            state.splice(action.payload, 1)
+            break
+
         default:
             break
     }
