@@ -27,6 +27,11 @@ class Chatbox extends Component {
         this.props.sendMsg(payload)
     }
 
+    sendAcknowledgeMsg = (indexToPop) => {
+        this.props.popMessage(indexToPop)
+        this.props.sendMsg('who are you', true)
+    }
+
     render() {
         let headerStyle = ''
         let headerCollapse = this.state.headerCollapse
@@ -149,6 +154,7 @@ class Chatbox extends Component {
                                         showLiveChatForm={showLiveChatForm}
                                         waitingForAdmin={waitingForAdmin}
                                         backendUrl={this.props.backendUrl}
+                                        sendAcknowledgeMsg={this.sendAcknowledgeMsg}
                                     />
                                     <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
                                 </Accordion.Content>
@@ -193,6 +199,7 @@ class Chatbox extends Component {
                                     showLiveChatForm={showLiveChatForm}
                                     waitingForAdmin={waitingForAdmin}
                                     backendUrl={this.props.backendUrl}
+                                    sendAcknowledgeMsg={this.sendAcknowledgeMsg}
                                 />
                                 <ChatboxForm sendMsg={this.props.sendMsg} waitingForAdmin={waitingForAdmin}/>
                             </Accordion.Content>
