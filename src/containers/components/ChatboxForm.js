@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Segment, Form } from 'semantic-ui-react'
+import { Segment, Form, Icon } from 'semantic-ui-react'
 
 class ChatboxForm extends Component {
 
@@ -28,7 +28,7 @@ class ChatboxForm extends Component {
                 padding: '5px'
             }}>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input required name='msg' placeholder='Type here...' icon='send' onChange={this.handleChange} value={msg} disabled={this.props.waitingForAdmin}/>
+                    <Form.Input required name='msg' placeholder='Type here...' onChange={this.handleChange} value={msg} disabled={this.props.waitingForAdmin} icon={<Icon name='send' link onClick={this.handleSubmit}/>}/>
                 </Form>
 
             </Segment>
