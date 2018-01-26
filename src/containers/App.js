@@ -144,12 +144,61 @@ class App extends Component {
         })
     }
 
+    executeAction = (backendUrl, next_action, uuid, sender_id) => {
+        if (next_action === 'action_listen') {
+            // stop calling execute action liao.. done
+        }
+        else {
+
+            // if there is still got next action
+            request
+                .post(backendUrl + '/chatbot/v1/executeAction')
+                .set('contentType', 'application/json; charset=utf-8')
+                .set('dataType', 'json')
+                .send({
+                    uuid: uuid,
+                    action: next_action,
+                    sender_id: sender_id
+                })
+                .end((err, res) => {
+
+                    try {
+                        if (err || !res.ok) {
+                            let errormsg = res.body.errors
+                            throw errormsg
+                        }
+                        else {
+                            let result = res.body
+
+                            if (!result) {
+                                throw new Error('no body msg')
+                            }
+
+                            // store the action definition
+                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.returnAct) }))
+
+                            // execute again to see whether still got any action need to execute mah
+                            this.executeAction(backendUrl, result.result.next_action, uuid, sender_id)
+
+                        }
+                    } catch (e) {
+                        console.log(e.toString())
+                    }
+
+                })
+
+        }
+    }
+
     emitMsgToChatbot = (msg, nodispatch) => {
 
         let envReducer = this.props.envReducer
+        const sender_id = this.state.chatbotSocket.socket.id
+        const backendUrl = envReducer.backendUrl
+        const cbuuid = envReducer.chatbotId
 
         request
-            .post(envReducer.backendUrl + '/chatbot/v1/query')
+            .post(backendUrl + '/chatbot/v1/query')
             .set('contentType', 'application/json; charset=utf-8')
             .set('dataType', 'json')
             .send({
@@ -171,7 +220,7 @@ class App extends Component {
                             throw new Error('no body msg')
                         }
 
-                        this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.action) }))
+                        this.executeAction(backendUrl, result.next_action, cbuuid, sender_id)
                     }
                 } catch (e) {
                     console.log(e.toString())
