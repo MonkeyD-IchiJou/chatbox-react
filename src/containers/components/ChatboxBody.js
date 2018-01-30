@@ -186,6 +186,7 @@ class ChatboxBody extends Component {
                 )
             }
             else if (sendFormDisabled) {
+                // if form is disabled
                 renderbody = (
                     <Dimmer active inverted>
                         <Loader inverted>Searching for a live agent</Loader>

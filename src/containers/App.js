@@ -32,15 +32,10 @@ class App extends Component {
         }
     }
 
-    timer = () => {
-        this.emitMsgToChatbot('rating', true)
-        clearInterval(this.state.intervalId)
-    }
-
     componentDidMount() {
 
-        let envReducer = this.props.envReducer
-        let chatboxMode = envReducer.chatboxMode
+        const { envReducer, dispatch } = this.props
+        const chatboxMode = envReducer.chatboxMode
 
         switch (chatboxMode) {
             case 'CHATBOT':
@@ -53,7 +48,7 @@ class App extends Component {
             case 'LIVECHAT':
                 // livechat only
                 this.sendFormDisableMah(true)
-                this.props.dispatch(usrReqLivechat_act())
+                dispatch(usrReqLivechat_act())
                 break
 
             case 'CHATBOT_LIVECHAT':
@@ -71,10 +66,16 @@ class App extends Component {
     }
 
     componentWillUnmount() {
+        // clear the timer
         clearInterval(this.state.intervalId)
-        // disconnect 
+        // disconnect socket server
         this.state.chatbotSocket.disconnectSocket()
         this.state.livechatSocket.disconnectSocket()
+    }
+
+    timer = () => {
+        this.emitMsgToChatbot('rating', true)
+        clearInterval(this.state.intervalId)
     }
 
     sendFormDisableMah = (val) => {
@@ -86,6 +87,7 @@ class App extends Component {
         const { envReducer, userReducer } = this.props
         let livechatSocket = this.state.livechatSocket
 
+        // do not allow user to send any msg when I am connecting to socket server
         this.sendFormDisableMah(true)
 
         // disconnect the previous live chat if exist
@@ -111,8 +113,11 @@ class App extends Component {
 
             // waiting for admin to send me some msg
             livechatSocket.subscribe('client_receiving_msg', (data) => {
+
                 this.props.dispatch(pushMsg_act({ from: 'bot', msg: [JSON.stringify({ type: 'TEXT', text: data.msg })] }))
                 this.props.dispatch(setAdminInfo_act(data.adminUsername))
+
+                // user can begin to send msg back to admin
                 this.sendFormDisableMah(false)
             })
 
@@ -122,11 +127,11 @@ class App extends Component {
 
     connectChatbotSocket = () => {
 
-        // disconnect the chatbot socket if exist
-        this.state.chatbotSocket.disconnectSocket()
-
-        let envReducer = this.props.envReducer
+        const { envReducer } = this.props
         let chatbotSocket = this.state.chatbotSocket
+
+        // disconnect the chatbot socket if exist
+        chatbotSocket.disconnectSocket()
 
         // connect to my socket server
         chatbotSocket.connectSocket(envReducer.backendUrl + '/cbIO')
@@ -281,6 +286,7 @@ class App extends Component {
     }
 
     emitMsgToLivechatSocket = (msg) => {
+
         const { userReducer, adminReducer } = this.props
         let livechatSocket = this.state.livechatSocket
 
@@ -293,6 +299,7 @@ class App extends Component {
         })
 
         this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
+
     }
 
     setUserInfo = (username, email, problem) => {
@@ -308,7 +315,7 @@ class App extends Component {
 
     render() {
 
-        const { envReducer, adminReducer, userReducer, msgReducer } = this.props
+        const { envReducer, userReducer, msgReducer } = this.props
 
         let chatboxMode = envReducer.chatboxMode
 
@@ -337,11 +344,10 @@ class App extends Component {
                         allMsgs={msgReducer}
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
-                        userReducer={userReducer}
-                        adminReducer={adminReducer}
                         backendUrl={envReducer.backendUrl}
                         sendFormDisabled={this.state.sendFormDisabled}
                         sendFormDisableMah={this.sendFormDisableMah}
+                        userReducer={userReducer}
                     />
                 )
 

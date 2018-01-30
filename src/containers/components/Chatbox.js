@@ -45,29 +45,18 @@ class Chatbox extends Component {
         let mobileBoxStyle = {}
         let axis = ''
 
-        let chatboxMode = this.props.chatboxMode
+        const { chatboxMode, sendFormDisabled, allMsgs, setUserInfo, backendUrl, sendFormDisableMah, sendMsg } = this.props
         let showLiveChatForm = false
-        const sendFormDisabled = this.props.sendFormDisabled
 
         if (chatboxMode === 'LIVECHAT') {
 
             // if the chatboxMode is livechat only
-            const { userReducer, adminReducer } = this.props
+            const { userReducer } = this.props
 
             if (!userReducer.username && !userReducer.email && !userReducer.problem) {
                 // user need to identify himself
                 // show the livechat form instead of msgs
                 showLiveChatForm = true
-            }
-
-            if (adminReducer.adminName) {
-                // if adminName and adminId are presents
-                // then user can start to type message to admin
-                //sendFormDisabled = false
-            }
-            else {
-                // user are not able to type message to admin, and chatbox body is loading
-                //sendFormDisabled = true
             }
 
         }
@@ -147,17 +136,17 @@ class Chatbox extends Component {
                                         maxWidth={'360px'} 
                                         minHeight={'400px'} 
                                         maxHeight={'400px'} 
-                                        allMsgs={this.props.allMsgs} 
+                                        allMsgs={allMsgs} 
                                         handleButtonClick={this.handleButtonClick}
                                         chatboxMode={chatboxMode}
-                                        setUserInfo={this.props.setUserInfo}
+                                        setUserInfo={setUserInfo}
                                         showLiveChatForm={showLiveChatForm}
                                         sendFormDisabled={sendFormDisabled}
-                                        backendUrl={this.props.backendUrl}
+                                        backendUrl={backendUrl}
                                         sendAcknowledgeMsg={this.sendAcknowledgeMsg}
-                                        sendFormDisableMah={this.props.sendFormDisableMah}
+                                        sendFormDisableMah={sendFormDisableMah}
                                     />
-                                    <ChatboxForm sendMsg={this.props.sendMsg} sendFormDisabled={sendFormDisabled}/>
+                                    <ChatboxForm sendMsg={sendMsg} sendFormDisabled={sendFormDisabled}/>
                                 </Accordion.Content>
 
                             </Accordion>
@@ -193,17 +182,17 @@ class Chatbox extends Component {
                                 <ChatboxBody 
                                     maxHeight={'0px'}
                                     minHeight={this.state.windowHeight.toString() + 'px'}
-                                    allMsgs={this.props.allMsgs}
+                                    allMsgs={allMsgs}
                                     handleButtonClick={this.handleButtonClick}
                                     chatboxMode={chatboxMode}
-                                    setUserInfo={this.props.setUserInfo}
+                                    setUserInfo={setUserInfo}
                                     showLiveChatForm={showLiveChatForm}
                                     sendFormDisabled={sendFormDisabled}
-                                    backendUrl={this.props.backendUrl}
+                                    backendUrl={backendUrl}
                                     sendAcknowledgeMsg={this.sendAcknowledgeMsg}
-                                    sendFormDisableMah={this.props.sendFormDisableMah}
+                                    sendFormDisableMah={sendFormDisableMah}
                                 />
-                                <ChatboxForm sendMsg={this.props.sendMsg} sendFormDisabled={sendFormDisabled}/>
+                                <ChatboxForm sendMsg={sendMsg} sendFormDisabled={sendFormDisabled}/>
                             </Accordion.Content>
 
                         </Accordion>
