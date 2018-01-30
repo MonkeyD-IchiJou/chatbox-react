@@ -10,7 +10,6 @@ class Chatbox extends Component {
         super(props)
         this.state = {
             headerCollapse: false,
-            sendFormDisabled: false,
             windowHeight: window.innerHeight - 78
         }
     }
@@ -34,10 +33,6 @@ class Chatbox extends Component {
         this.sendFormDisableMah(false)
     }
 
-    sendFormDisableMah = (val) => {
-        this.setState({sendFormDisabled: val})
-    }
-
     render() {
         let headerStyle = ''
         let headerCollapse = this.state.headerCollapse
@@ -52,13 +47,12 @@ class Chatbox extends Component {
 
         let chatboxMode = this.props.chatboxMode
         let showLiveChatForm = false
-        let sendFormDisabled = this.state.sendFormDisabled
+        const sendFormDisabled = this.props.sendFormDisabled
 
         if (chatboxMode === 'LIVECHAT') {
 
             // if the chatboxMode is livechat only
-            let userReducer = this.props.userReducer
-            let adminReducer = this.props.adminReducer
+            const { userReducer, adminReducer } = this.props
 
             if (!userReducer.username && !userReducer.email && !userReducer.problem) {
                 // user need to identify himself
@@ -69,11 +63,11 @@ class Chatbox extends Component {
             if (adminReducer.adminName) {
                 // if adminName and adminId are presents
                 // then user can start to type message to admin
-                this.sendFormDisableMah(false)
+                //sendFormDisabled = false
             }
             else {
                 // user are not able to type message to admin, and chatbox body is loading
-                this.sendFormDisableMah(true)
+                //sendFormDisabled = true
             }
 
         }
@@ -161,7 +155,7 @@ class Chatbox extends Component {
                                         sendFormDisabled={sendFormDisabled}
                                         backendUrl={this.props.backendUrl}
                                         sendAcknowledgeMsg={this.sendAcknowledgeMsg}
-                                        sendFormDisableMah={this.sendFormDisableMah}
+                                        sendFormDisableMah={this.props.sendFormDisableMah}
                                     />
                                     <ChatboxForm sendMsg={this.props.sendMsg} sendFormDisabled={sendFormDisabled}/>
                                 </Accordion.Content>
@@ -207,7 +201,7 @@ class Chatbox extends Component {
                                     sendFormDisabled={sendFormDisabled}
                                     backendUrl={this.props.backendUrl}
                                     sendAcknowledgeMsg={this.sendAcknowledgeMsg}
-                                    sendFormDisableMah={this.sendFormDisableMah}
+                                    sendFormDisableMah={this.props.sendFormDisableMah}
                                 />
                                 <ChatboxForm sendMsg={this.props.sendMsg} sendFormDisabled={sendFormDisabled}/>
                             </Accordion.Content>

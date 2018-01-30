@@ -22,7 +22,8 @@ class ChatboxBody extends Component {
     }
 
     render() {
-        const allMsgs = this.props.allMsgs
+        const { allMsgs, backendUrl, handleButtonClick, sendAcknowledgeMsg, chatboxMode, sendFormDisabled, showLiveChatForm, setUserInfo, maxHeight, minHeight, maxWidth } = this.props
+
         let renderbody = ''
 
         let botAvatar = (
@@ -35,7 +36,7 @@ class ChatboxBody extends Component {
             />
         )
 
-        botAvatar = (<Comment.Avatar as={Image} src={this.props.backendUrl + '/viewfile/avatarpic.png'} size='large'/>)
+        botAvatar = (<Comment.Avatar as={Image} src={backendUrl + '/viewfile/avatarpic.png'} size='large'/>)
 
         let allMsgsRender = ''
 
@@ -100,7 +101,7 @@ class ChatboxBody extends Component {
                                     if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
                                     }
                                     else {
-                                        imageUrl = this.props.backendUrl + '/viewfile/' + imageUrl
+                                        imageUrl = backendUrl + '/viewfile/' + imageUrl
                                     }
 
                                     return (
@@ -112,7 +113,7 @@ class ChatboxBody extends Component {
                                         <List key={mindex} bulleted>
                                             {eachmsg.buttons.map((button, bi) => {
                                                 return (
-                                                    <List.Item as='a' key={bi} onClick={() => { this.props.handleButtonClick(button.payload) }} style={{ marginTop: '10px' }}>
+                                                    <List.Item as='a' key={bi} onClick={() => { handleButtonClick(button.payload) }} style={{ marginTop: '10px' }}>
                                                         {button.text}
                                                     </List.Item>
                                                 )
@@ -121,7 +122,7 @@ class ChatboxBody extends Component {
                                     )
 
                                 case 'TMP':
-                                    return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={this.props.sendAcknowledgeMsg} indexToPop={index} sendFormDisable={this.sendFormDisable}/></div>)
+                                    return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={sendAcknowledgeMsg} indexToPop={index} sendFormDisable={this.sendFormDisable}/></div>)
 
                                 default:
                                     return (<div key={mindex}>adsf</div>)
@@ -175,8 +176,16 @@ class ChatboxBody extends Component {
         )
 
 
-        if (this.props.chatboxMode === 'LIVECHAT') {
-            if (this.props.sendFormDisabled) {
+        if (chatboxMode === 'LIVECHAT') {
+            if (showLiveChatForm) {
+                // if request to show livechat form
+                renderbody = (
+                    <div className="cancelpls">
+                        <LivechatFormBody setUserInfo={setUserInfo} />
+                    </div>
+                )
+            }
+            else if (sendFormDisabled) {
                 renderbody = (
                     <Dimmer active inverted>
                         <Loader inverted>Searching for a live agent</Loader>
@@ -185,29 +194,20 @@ class ChatboxBody extends Component {
             }
         }
 
-        if (this.props.showLiveChatForm) {
-            // if request to show livechat form
-            renderbody = (
-                <div className="cancelpls">
-                    <LivechatFormBody setUserInfo={this.props.setUserInfo}/>
-                </div>
-            )
-        }
-
         return (
             <div ref={el => { this.el = el }} className="handle" style={{
-                maxHeight: this.props.maxHeight,
-                minHeight: this.props.minHeight,
+                maxHeight: maxHeight,
+                minHeight: minHeight,
                 minWidth: '350px',
-                maxWidth: this.props.maxWidth,
+                maxWidth: maxWidth,
                 overflowY: 'auto',
                 borderRadius: '0',
                 margin: '0'
             }}>
                 <Segment style={{
-                    minHeight: this.props.minHeight,
+                    minHeight: minHeight,
                     minWidth: '350px',
-                    maxWidth: this.props.maxWidth,
+                    maxWidth: maxWidth,
                     borderRadius: '0',
                     margin: '0'
                 }}>
@@ -219,147 +219,3 @@ class ChatboxBody extends Component {
 }
 
 export default ChatboxBody
-
-
-/**
-<Comment.Actions>
-    <Comment.Action style={{ margin: '0' }}>
-        <Icon name='smile' size='large' />
-    </Comment.Action>
-    <Comment.Action style={{ margin: '0' }}>
-        <Icon name='meh' size='large' />
-    </Comment.Action>
-    <Comment.Action style={{ margin: '0' }}>
-        <Icon name='frown' size='large' />
-    </Comment.Action>
-</Comment.Actions>
- * let msgrender = msg.msg.map((eachmsg, index) => {
-
-let msgsplit =''
-let msgheader = ''
-if (eachmsg==='')
-{
-msgheader ='EmptyRow'
-}
-else
-{
-msgsplit = eachmsg.split(":")
-msgheader = msgsplit[0]
-}
-
-// button is number
-if (!isNaN(msgheader)) {
-let buttonmsg = msgsplit[1].split('(')
-let buttonname = buttonmsg[0]
-let buttonpayload = buttonmsg[1].split(')')[0]
-return (
-<Button key={index} onClick={() => { this.props.handleButtonClick(buttonpayload) }} style={{marginTop: '10px'}}>
-{buttonname}
-</Button>
-)
-}
-else {
-if(msgheader === 'Image') {
-// check whether is an image or not
-let imageUrl = eachmsg.slice(7)
-if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
-}
-else {
-imageUrl = this.props.backendUrl + '/viewfile/' + imageUrl
-}
-
-return (
-<Image key={index} src={imageUrl} size='small' style={{ marginTop: '10px', width: 'auto' }}/>
-)
-}
-else  if(msgheader === 'EmptyRow') {
-return (<div key={index}>&nbsp;</div>)
-}
-else {
-
-switch(msg.msgtype) {
-case 'list':
-
-if (msgsplit.length>1)
-{
-
-    let ulmsg = ''
-    let ulname = ''
-    let ulpayload = ''
-
-    if( (msgheader === 'Url') || (msgheader === 'mailto')) {
-            ulmsg = msgsplit[1].split('(')
-            ulname = ulmsg[0]
-            ulpayload = ulmsg[1].split(')')[0]
-    }
-    else  {
-        ulmsg = msgsplit[1]
-        ulname = msgsplit[1]
-        ulpayload = msgsplit[1]
-
-    }
-    
-
-    if(msgheader === 'mailto') {
-        ulpayload = "mailto:" + ulpayload
-    }
-    else
-    {
-        switch(ulpayload) {
-            case 'https':
-                ulpayload = ulmsg[1].split(')')[0] + ":" + msgsplit[2].split(')')[0]
-                    
-            case 'http' :   
-                ulpayload = ulmsg[1].split(')')[0] + ":" + msgsplit[2].split(')')[0]
-                        
-        }
-    }
-
-    
-            
-if(msgheader === 'Input') {
-
-    return ( 
-        <div>
-            <ul key={index}>
-            <li><a href='#' onClick={() => { this.props.handleButtonClick(ulpayload) }} style={{marginTop: '10px'}}>
-            {ulname}</a></li>
-            
-            </ul>
-        </div>);
-
-}
-else  if(msgheader === 'mailto') {
-    return ( 
-        <div>
-            <ul key={index}>
-    <li><a href={ulpayload} style={{ marginTop: '10px' }}>
-    {ulname}</a></li>
-                </ul >
-            </div >);
-}
-{
-
-return (
-<div>
-<ul key={index}>
-<li><a href={ulpayload} target="_blank" style={{ marginTop: '10px' }}>
-{ulname}</a></li>
-</ul>
-</div>);
-
-}
-
-
-}
-                                            
-default:
-return (<div key={index}>{msgheader}</div>)
-
-}
-
-// return (<div key={index}>{msgheader}</div>)
-}
-}
-})
- */

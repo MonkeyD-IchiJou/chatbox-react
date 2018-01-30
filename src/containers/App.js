@@ -27,7 +27,8 @@ class App extends Component {
         this.state = {
             chatbotSocket: new SocketConnect('chatbotSocket'),
             livechatSocket: new SocketConnect('livechatSocket'),
-            intervalId: 0
+            intervalId: 0,
+            sendFormDisabled: false
         }
     }
 
@@ -38,9 +39,6 @@ class App extends Component {
 
     componentDidMount() {
 
-        var intervalId = setInterval(this.timer, 300000)
-        this.setState({ intervalId: intervalId })
-
         let envReducer = this.props.envReducer
         let chatboxMode = envReducer.chatboxMode
 
@@ -48,10 +46,13 @@ class App extends Component {
             case 'CHATBOT':
                 // chatbot only, connect to my chatbot socket server pls
                 this.connectChatbotSocket()
+                // simple rating prompt timer
+                this.setState({ intervalId: setInterval(this.timer, 300000) })
                 break
 
             case 'LIVECHAT':
                 // livechat only
+                this.sendFormDisableMah(true)
                 this.props.dispatch(usrReqLivechat_act())
                 break
 
@@ -76,11 +77,16 @@ class App extends Component {
         this.state.livechatSocket.disconnectSocket()
     }
 
+    sendFormDisableMah = (val) => {
+        this.setState({ sendFormDisabled: val })
+    }
+
     connectLivechatSocket = () => {
 
-        let envReducer = this.props.envReducer
-        let userReducer = this.props.userReducer
+        const { envReducer, userReducer } = this.props
         let livechatSocket = this.state.livechatSocket
+
+        this.sendFormDisableMah(true)
 
         // disconnect the previous live chat if exist
         livechatSocket.disconnectSocket()
@@ -105,8 +111,9 @@ class App extends Component {
 
             // waiting for admin to send me some msg
             livechatSocket.subscribe('client_receiving_msg', (data) => {
-                this.props.dispatch(pushMsg_act({ from: 'bot', msg: [data.msg] }))
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: [JSON.stringify({ type: 'TEXT', text: data.msg })] }))
                 this.props.dispatch(setAdminInfo_act(data.adminUsername))
+                this.sendFormDisableMah(false)
             })
 
         })
@@ -274,13 +281,17 @@ class App extends Component {
     }
 
     emitMsgToLivechatSocket = (msg) => {
+        const { userReducer, adminReducer } = this.props
+        let livechatSocket = this.state.livechatSocket
+
         // emit to live chat socket server about this updated username and problem
-        this.state.livechatSocket.socketEmit('client_send_admin_msg', {
-            clientSocketId: this.state.livechatSocket.socket.id,
-            clientUsername: this.props.userReducer.userReducer,
-            adminUsername: this.props.adminReducer.adminName,
+        livechatSocket.socketEmit('client_send_admin_msg', {
+            clientSocketId: livechatSocket.socket.id,
+            clientUsername: userReducer.username,
+            adminUsername: adminReducer.adminName,
             msg: msg
         })
+
         this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
     }
 
@@ -297,8 +308,8 @@ class App extends Component {
 
     render() {
 
-        let envReducer = this.props.envReducer
-        let adminReducer = this.props.adminReducer
+        const { envReducer, adminReducer, userReducer, msgReducer } = this.props
+
         let chatboxMode = envReducer.chatboxMode
 
         switch (chatboxMode) {
@@ -308,10 +319,12 @@ class App extends Component {
                     <Chatbox 
                         sendMsg={this.emitMsgToChatbot}
                         popMessage={this.popMessage}
-                        allMsgs={this.props.msgReducer}
+                        allMsgs={msgReducer}
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
-                        backendUrl={this.props.envReducer.backendUrl}
+                        backendUrl={envReducer.backendUrl}
+                        sendFormDisabled={this.state.sendFormDisabled}
+                        sendFormDisableMah={this.sendFormDisableMah}
                     />
                 )
 
@@ -321,12 +334,14 @@ class App extends Component {
                     <Chatbox 
                         sendMsg={this.emitMsgToLivechatSocket}
                         popMessage={this.popMessage}
-                        allMsgs={this.props.msgReducer}
+                        allMsgs={msgReducer}
                         chatboxMode={chatboxMode}
                         setUserInfo={this.setUserInfo}
-                        userReducer={this.props.userReducer}
+                        userReducer={userReducer}
                         adminReducer={adminReducer}
-                        backendUrl={this.props.envReducer.backendUrl}
+                        backendUrl={envReducer.backendUrl}
+                        sendFormDisabled={this.state.sendFormDisabled}
+                        sendFormDisableMah={this.sendFormDisableMah}
                     />
                 )
 
