@@ -187,6 +187,11 @@ class App extends Component {
                             }
 
                             // store the action definition
+                            result.returnAct.forEach((act, index)=>{
+                                if(act.type === 'QR') {
+                                    this.sendFormDisableMah(true)
+                                }
+                            })
                             this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.returnAct) }))
 
                             // execute again to see whether still got any action need to execute mah

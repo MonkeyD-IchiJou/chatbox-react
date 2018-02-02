@@ -25,6 +25,7 @@ class Chatbox extends Component {
 
     handleButtonClick = (payload) => {
         this.props.sendMsg(payload)
+        this.props.sendFormDisableMah(false)
     }
 
     sendAcknowledgeMsg = (indexToPop) => {
