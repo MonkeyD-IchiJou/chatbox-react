@@ -4,3 +4,10 @@ export function setAppLoading_act(payload) {
         payload: payload
     }
 }
+
+export function setChatboxMode_act(payload) {
+    return {
+        type: 'SET_ChatboxMode',
+        payload: payload
+    }
+}

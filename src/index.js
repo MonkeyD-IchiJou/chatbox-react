@@ -22,10 +22,10 @@ window.RenderApp = function (chatbotId, livechatId) {
     }
 
     // tmp, delete in production mode pls
-    //defaultEnvStore.chatboxMode = 'CHATBOT'
-    //defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
+    defaultEnvStore.chatboxMode = 'CHATBOT'
+    //defaultEnvStore.chatboxMode = 'LIVECHAT'
 
-    defaultEnvStore.chatboxMode = 'LIVECHAT'
+    defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
     defaultEnvStore.livechatId = 'QRdCHThaReh4vgQwuqN71LWBopF12ufXRAfcoSvzMGLRM7Cn6'
 
     new ReactDOM.render(

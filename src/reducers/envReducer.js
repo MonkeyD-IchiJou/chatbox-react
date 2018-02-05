@@ -13,6 +13,13 @@ const envReducer = (
             }
             break
 
+        case "SET_ChatboxMode":
+            state = {
+                ...state,
+                chatboxMode: action.payload
+            }
+            break
+
         default:
             break
     }
