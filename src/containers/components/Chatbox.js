@@ -46,7 +46,16 @@ class Chatbox extends Component {
         let mobileBoxStyle = {}
         let axis = ''
 
-        const { chatboxMode, sendFormDisabled, allMsgs, setUserInfo, backendUrl, sendFormDisableMah, sendMsg, headerName } = this.props
+        const {
+            chatboxMode,
+            sendFormDisabled,
+            allMsgs,
+            setUserInfo,
+            backendUrl,
+            sendFormDisableMah,
+            sendMsg,
+            headerName
+        } = this.props
         let showLiveChatForm = false
 
         if (chatboxMode === 'LIVECHAT') {
@@ -56,7 +65,7 @@ class Chatbox extends Component {
 
             if (!userReducer.username && !userReducer.email && !userReducer.problem) {
                 // user need to identify himself
-                // show the livechat form instead of msgs
+                // show the livechat form instead of msgs if user never fill up his info
                 showLiveChatForm = true
             }
 

@@ -197,7 +197,7 @@ class ChatboxBody extends Component {
                 return ''
 
             })
-            
+
         }
 
         renderbody = (
