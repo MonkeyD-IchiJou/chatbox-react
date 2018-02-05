@@ -67,6 +67,8 @@ class App extends Component {
     componentWillUnmount() {
         // clear the timer
         clearInterval(this.state.intervalId)
+        clearInterval(this.state.lcintervalId)
+
         // disconnect socket server
         this.state.chatbotSocket.disconnectSocket()
         this.state.livechatSocket.disconnectSocket()
@@ -77,11 +79,18 @@ class App extends Component {
     }
 
     ChatbotToLivechat = () => {
+        // disconnect the chatbot socket server
+        this.state.chatbotSocket.disconnectSocket()
+
         // switch to live chat mode
         this.sendFormDisableMah(true)
         this.props.dispatch(setChatboxMode_act('LIVECHAT'))
         this.props.dispatch(usrReqLivechat_act())
+
+        // no more rating
         clearInterval(this.state.intervalId)
+
+        // clear itself
         clearInterval(this.state.lcintervalId)
     }
 
@@ -193,7 +202,7 @@ class App extends Component {
                                 throw new Error('no body msg')
                             }
 
-                            // store the action definition
+                            // pre checking
                             result.returnAct.forEach((act, index)=>{
                                 switch (act.type) {
                                     case 'QR':
@@ -201,6 +210,7 @@ class App extends Component {
                                         break
                                     case 'CR':
                                         if(act.customObj.livechat) {
+                                            // if got livechat counter...
                                             const LivechatCounter =  this.state.LivechatCounter
                                             if (LivechatCounter < 2) {
                                                 this.setState({ LivechatCounter: LivechatCounter + 1 })
@@ -215,6 +225,8 @@ class App extends Component {
                                         break
                                 }
                             })
+
+                            // store the action definition
                             this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.returnAct) }))
 
                             // execute again to see whether still got any action need to execute mah
@@ -268,46 +280,11 @@ class App extends Component {
 
             })
 
-        // request to api.ai
-        /*request
-            .get('https://api.api.ai/v1/query')
-            .timeout({ deadline: 60000 })
-            .set('Authorization', 'Bearer a1ba0f8c5f254cb3920266e08d76237a')
-            .query({
-                v: 20150910,
-                query: msg,
-                lang: 'en',
-                sessionId: this.state.chatbotSocket.socket.id
-            })
-            .on('error', (err) => { console.log('[/query][error] -> ' + err) })
-            .end((err, res) => {
-
-                if (err) {
-                    console.log('[/query][info] -> ' + err)
-                    this.props.dispatch(pushMsg_act({ from: 'bot', msg: [err] }))
-                }
-                else {
-                    try {
-                        let fulfillment = res.body.result.fulfillment
-                        console.log(fulfillment);
-                        if (fulfillment.speech) {
-                            // for smalltalk
-                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: [fulfillment.speech], }))
-                        }
-                        else {
-                            this.props.dispatch(pushMsg_act({ from: 'bot', msg: fulfillment.messages[0].payload.msg, msgtype: fulfillment.messages[0].payload.msgtype, msgheader: fulfillment.messages[0].payload.msgheader }))
-                        }
-                    }
-                    catch (err) {
-                        this.props.dispatch(pushMsg_act({ from: 'bot', msg: [err.toString()] }))
-                    }
-                }
-
-            })*/
-
         if(nodispatch === true) {
+            // do not do anything
         }
         else {
+            // store this user msg
             this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
         }
 
@@ -365,7 +342,7 @@ class App extends Component {
                 )
 
             case 'LIVECHAT':
-                // straight away show the live chat form at the very begining pls
+                // live chat mode
                 return (
                     <Chatbox 
                         sendMsg={this.emitMsgToLivechatSocket}
@@ -382,9 +359,7 @@ class App extends Component {
                 )
 
             default:
-                return (
-                    <Chatbox sendMsg={this.emitMsgToChatbot} allMsgs={this.props.msgReducer} />
-                )
+                return ''
 
         }
 
@@ -401,3 +376,42 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps)(App)
+
+
+
+// request to api.ai
+/*request
+.get('https://api.api.ai/v1/query')
+.timeout({ deadline: 60000 })
+.set('Authorization', 'Bearer a1ba0f8c5f254cb3920266e08d76237a')
+.query({
+    v: 20150910,
+    query: msg,
+    lang: 'en',
+    sessionId: this.state.chatbotSocket.socket.id
+})
+.on('error', (err) => { console.log('[/query][error] -> ' + err) })
+.end((err, res) => {
+
+    if (err) {
+        console.log('[/query][info] -> ' + err)
+        this.props.dispatch(pushMsg_act({ from: 'bot', msg: [err] }))
+    }
+    else {
+        try {
+            let fulfillment = res.body.result.fulfillment
+            console.log(fulfillment);
+            if (fulfillment.speech) {
+                // for smalltalk
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: [fulfillment.speech], }))
+            }
+            else {
+                this.props.dispatch(pushMsg_act({ from: 'bot', msg: fulfillment.messages[0].payload.msg, msgtype: fulfillment.messages[0].payload.msgtype, msgheader: fulfillment.messages[0].payload.msgheader }))
+            }
+        }
+        catch (err) {
+            this.props.dispatch(pushMsg_act({ from: 'bot', msg: [err.toString()] }))
+        }
+    }
+
+})*/
