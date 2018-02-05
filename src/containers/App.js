@@ -29,7 +29,8 @@ class App extends Component {
             livechatSocket: new SocketConnect('livechatSocket'),
             intervalId: 0,
             sendFormDisabled: false,
-            LivechatCounter: 0
+            LivechatCounter: 0,
+            lcintervalId: 0
         }
     }
 
@@ -75,6 +76,15 @@ class App extends Component {
         this.emitMsgToChatbot('rating', true)
     }
 
+    ChatbotToLivechat = () => {
+        // switch to live chat mode
+        this.sendFormDisableMah(true)
+        this.props.dispatch(setChatboxMode_act('LIVECHAT'))
+        this.props.dispatch(usrReqLivechat_act())
+        clearInterval(this.state.intervalId)
+        clearInterval(this.state.lcintervalId)
+    }
+
     sendFormDisableMah = (val) => {
         this.setState({ sendFormDisabled: val })
     }
@@ -111,7 +121,7 @@ class App extends Component {
             // waiting for admin to send me some msg
             livechatSocket.subscribe('client_receiving_msg', (data) => {
 
-                this.props.dispatch(pushMsg_act({ from: 'bot', msg: [JSON.stringify({ type: 'TEXT', text: data.msg })] }))
+                this.props.dispatch(pushMsg_act({ from: data.adminUsername, msg: data.msg }))
                 this.props.dispatch(setAdminInfo_act(data.adminUsername))
 
                 // user can begin to send msg back to admin
@@ -196,10 +206,8 @@ class App extends Component {
                                                 this.setState({ LivechatCounter: LivechatCounter + 1 })
                                             }
                                             else {
-                                                // switch to live chat mode
-                                                this.sendFormDisableMah(true)
-                                                this.props.dispatch(setChatboxMode_act('LIVECHAT'))
-                                                this.props.dispatch(usrReqLivechat_act())
+                                                this.emitMsgToChatbot('Livechat please', true)
+                                                this.setState({ lcintervalId: setInterval(this.ChatbotToLivechat, 5000) })
                                             }
                                         }
                                         break
@@ -352,6 +360,7 @@ class App extends Component {
                         backendUrl={envReducer.backendUrl}
                         sendFormDisabled={this.state.sendFormDisabled}
                         sendFormDisableMah={this.sendFormDisableMah}
+                        headerName={'Ask NEC Chatbot'}
                     />
                 )
 
@@ -368,6 +377,7 @@ class App extends Component {
                         sendFormDisabled={this.state.sendFormDisabled}
                         sendFormDisableMah={this.sendFormDisableMah}
                         userReducer={userReducer}
+                        headerName={'Live Chat Session'}
                     />
                 )
 
