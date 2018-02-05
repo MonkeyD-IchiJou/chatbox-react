@@ -50,123 +50,154 @@ class ChatboxBody extends Component {
                     dividermah = ''
                 }
 
-                if (msg.from === 'user') {
-                    return (
-                        <Comment key={index}>
+                if(msg.from) {
+                    if (msg.from === 'user') {
+                        return (
+                            <Comment key={index}>
 
-                            <Comment.Avatar
-                                as={Icon}
-                                size='large'
-                                name='user'
-                            />
+                                <Comment.Avatar
+                                    as={Icon}
+                                    size='large'
+                                    name='user'
+                                />
 
-                            <Comment.Content>
+                                <Comment.Content>
 
-                                <Comment.Author as={'a'}>User</Comment.Author>
+                                    <Comment.Author as={'a'}>User</Comment.Author>
 
-                                <Comment.Metadata>
-                                    <div>Today at {msg.msgtime}</div>
-                                </Comment.Metadata>
+                                    <Comment.Metadata>
+                                        <div>Today at {msg.msgtime}</div>
+                                    </Comment.Metadata>
 
-                                <Comment.Text><div className="cancelpls">{msg.msg}</div></Comment.Text>
+                                    <Comment.Text><div className="cancelpls">{msg.msg}</div></Comment.Text>
 
-                                <Comment.Actions>
-                                    <Comment.Action style={{ margin: '0' }}>
-                                        <Icon name='hide' size='large' />
-                                    </Comment.Action>
-                                </Comment.Actions>
+                                    <Comment.Actions>
+                                        <Comment.Action style={{ margin: '0' }}>
+                                            <Icon name='hide' size='large' />
+                                        </Comment.Action>
+                                    </Comment.Actions>
 
-                            </Comment.Content>
+                                </Comment.Content>
 
-                            {dividermah}
+                                {dividermah}
 
-                        </Comment>
-                    )
-                }
-                else if (msg.from === 'bot') {
+                            </Comment>
+                        )
+                    }
+                    else if (msg.from === 'bot') {
 
-                    let parsedmsg = JSON.parse(msg.msg)
-                    let msgrender = ''
+                        let parsedmsg = JSON.parse(msg.msg)
+                        let msgrender = ''
 
-                    if (Array.isArray(parsedmsg)) {
+                        if (Array.isArray(parsedmsg)) {
 
-                        msgrender = parsedmsg.map((eachmsg, mindex)=>{
+                            msgrender = parsedmsg.map((eachmsg, mindex)=>{
 
-                            switch (eachmsg.type) {
+                                switch (eachmsg.type) {
+                                    case 'TEXT':
+                                        return (<div className="cancelpls" key={mindex}>{eachmsg.text}</div>)
+
+                                    case 'IMG':
+                                        let imageUrl = eachmsg.image
+                                        if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
+                                        }
+                                        else {
+                                            imageUrl = backendUrl + '/viewfile/' + imageUrl
+                                        }
+
+                                        return (
+                                            <Image key={mindex} src={imageUrl} size='small' style={{ marginTop: '10px', width: 'auto' }} />
+                                        )
+
+                                    case 'QR':
+                                        return (
+                                            <List key={mindex} bulleted>
+                                                {eachmsg.buttons.map((button, bi) => {
+                                                    return (
+                                                        <List.Item as='a' key={bi} onClick={() => { handleButtonClick(button.payload) }} style={{ marginTop: '10px' }}>
+                                                            {button.text}
+                                                        </List.Item>
+                                                    )
+                                                })}
+                                            </List>
+                                        )
+
+                                    case 'TMP':
+                                        return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={sendAcknowledgeMsg} indexToPop={index} sendFormDisable={this.sendFormDisable}/></div>)
+
+                                    default:
+                                        return (<div key={mindex}></div>)
+
+                                }
+                            })
+
+                        }
+                        else {
+                            switch (parsedmsg.type) {
                                 case 'TEXT':
-                                    return (<div className="cancelpls" key={mindex}>{eachmsg.text}</div>)
-
-                                case 'IMG':
-                                    let imageUrl = eachmsg.image
-                                    if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
-                                    }
-                                    else {
-                                        imageUrl = backendUrl + '/viewfile/' + imageUrl
-                                    }
-
-                                    return (
-                                        <Image key={mindex} src={imageUrl} size='small' style={{ marginTop: '10px', width: 'auto' }} />
-                                    )
-
-                                case 'QR':
-                                    return (
-                                        <List key={mindex} bulleted>
-                                            {eachmsg.buttons.map((button, bi) => {
-                                                return (
-                                                    <List.Item as='a' key={bi} onClick={() => { handleButtonClick(button.payload) }} style={{ marginTop: '10px' }}>
-                                                        {button.text}
-                                                    </List.Item>
-                                                )
-                                            })}
-                                        </List>
-                                    )
-
-                                case 'TMP':
-                                    return (<div className="cancelpls" key={mindex}><ChatbotTmpForm sendAcknowledgeMsg={sendAcknowledgeMsg} indexToPop={index} sendFormDisable={this.sendFormDisable}/></div>)
+                                    msgrender = parsedmsg.text
+                                    break
 
                                 default:
-                                    return (<div key={mindex}>adsf</div>)
-
+                                    break
                             }
-                        })
+                        }
 
+                        return (
+                            <Comment key={index}>
+
+                                {botAvatar}
+
+                                <Comment.Content>
+
+                                    <Comment.Author as={'a'}>Chatbot</Comment.Author>
+
+                                    <Comment.Metadata>
+                                        <div>Today at {msg.msgtime}</div>
+                                    </Comment.Metadata>
+
+                                    <Comment.Text>{msgrender}</Comment.Text>
+
+                                </Comment.Content>
+                                {dividermah}
+
+                            </Comment>
+                        )
                     }
                     else {
-                        switch (parsedmsg.type) {
-                            case 'TEXT':
-                                msgrender = parsedmsg.text
-                                break
+                        return (
+                            <Comment key={index}>
 
-                            default:
-                                break
-                        }
+                                <Comment.Avatar
+                                    as={Icon}
+                                    inverted
+                                    color='black'
+                                    size='large'
+                                    name='spy'
+                                />
+
+                                <Comment.Content>
+
+                                    <Comment.Author as={'a'}>{msg.from}</Comment.Author>
+
+                                    <Comment.Metadata>
+                                        <div>Today at {msg.msgtime}</div>
+                                    </Comment.Metadata>
+
+                                    <Comment.Text>{msg.msg}</Comment.Text>
+
+                                </Comment.Content>
+                                {dividermah}
+
+                            </Comment>
+                        )
                     }
-
-                    return (
-                        <Comment key={index}>
-
-                            {botAvatar}
-
-                            <Comment.Content>
-
-                                <Comment.Author as={'a'}>Chatbot</Comment.Author>
-
-                                <Comment.Metadata>
-                                    <div>Today at {msg.msgtime}</div>
-                                </Comment.Metadata>
-
-                                <Comment.Text>{msgrender}</Comment.Text>
-
-                            </Comment.Content>
-                            {dividermah}
-
-                        </Comment>
-                    )
                 }
 
-                
                 return ''
+
             })
+            
         }
 
         renderbody = (
