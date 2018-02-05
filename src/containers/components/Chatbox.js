@@ -46,7 +46,7 @@ class Chatbox extends Component {
         let mobileBoxStyle = {}
         let axis = ''
 
-        const { chatboxMode, sendFormDisabled, allMsgs, setUserInfo, backendUrl, sendFormDisableMah, sendMsg } = this.props
+        const { chatboxMode, sendFormDisabled, allMsgs, setUserInfo, backendUrl, sendFormDisableMah, sendMsg, headerName } = this.props
         let showLiveChatForm = false
 
         if (chatboxMode === 'LIVECHAT') {
@@ -83,7 +83,7 @@ class Chatbox extends Component {
                     marginRight: '10px',
                     paddingLeft: '10px'
                 }}>
-                    Ask NEC Chatbot
+                    {headerName}
                     < Icon name='minus' style={{ float: 'right' }} />
                 </div>
             )
@@ -135,8 +135,8 @@ class Chatbox extends Component {
                                 >
                                     <ChatboxBody 
                                         maxWidth={'360px'} 
-                                        minHeight={'400px'} 
-                                        maxHeight={'400px'} 
+                                        minHeight={'430px'} 
+                                        maxHeight={'430px'} 
                                         allMsgs={allMsgs} 
                                         handleButtonClick={this.handleButtonClick}
                                         chatboxMode={chatboxMode}
