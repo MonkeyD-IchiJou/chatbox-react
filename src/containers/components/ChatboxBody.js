@@ -68,7 +68,7 @@ class ChatboxBody extends Component {
                                     <div>Today at {msg.msgtime}</div>
                                 </Comment.Metadata>
 
-                                <Comment.Text>{msg.msg}</Comment.Text>
+                                <Comment.Text><div className="cancelpls">{msg.msg}</div></Comment.Text>
 
                                 <Comment.Actions>
                                     <Comment.Action style={{ margin: '0' }}>
@@ -94,7 +94,7 @@ class ChatboxBody extends Component {
 
                             switch (eachmsg.type) {
                                 case 'TEXT':
-                                    return (<div key={mindex}>{eachmsg.text}</div>)
+                                    return (<div className="cancelpls" key={mindex}>{eachmsg.text}</div>)
 
                                 case 'IMG':
                                     let imageUrl = eachmsg.image
