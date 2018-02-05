@@ -18,7 +18,8 @@ window.RenderApp = function (chatbotId, livechatId) {
         defaultEnvStore.chatboxMode = 'LIVECHAT'
     }
     if(chatbotId && livechatId) {
-        defaultEnvStore.chatboxMode = 'CHATBOT_LIVECHAT'
+        // if got both chatbot and livechat id.. then default to chatbot mode
+        defaultEnvStore.chatboxMode = 'CHATBOT'
     }
 
     // tmp, delete in production mode pls
