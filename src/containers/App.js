@@ -162,7 +162,7 @@ class App extends Component {
 
             chatbotSocket.subscribe('client_joined', (data) => {
                 // client successfully joined the room liao
-                this.emitMsgToChatbot('tmp form', true)
+                this.emitMsgToChatbot('who are you', true)
             })
 
             chatbotSocket.subscribe('chatbot_send_client', (data) => {

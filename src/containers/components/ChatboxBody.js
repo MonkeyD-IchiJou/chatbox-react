@@ -97,6 +97,9 @@ class ChatboxBody extends Component {
                                     case 'TEXT':
                                         return (<div className="cancelpls" key={mindex}>{eachmsg.text}</div>)
 
+                                    case 'LINK':
+                                        return (<div className="cancelpls" key={mindex}><a href={eachmsg.link} target="_blank">{eachmsg.link}</a></div>)
+
                                     case 'IMG':
                                         let imageUrl = eachmsg.image
                                         if (imageUrl.indexOf("http://") === 0 || imageUrl.indexOf("https://") === 0) {
