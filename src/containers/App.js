@@ -27,7 +27,6 @@ class App extends Component {
     this.state = {
       chatbotSocket: new SocketConnect('chatbotSocket'),
       livechatSocket: new SocketConnect('livechatSocket'),
-      intervalId: 0,
       sendFormDisabled: false,
       LivechatCounter: 0,
       lcintervalId: 0
@@ -43,8 +42,6 @@ class App extends Component {
       case 'CHATBOT':
         // chatbot only, connect to my chatbot socket server pls
         this.connectChatbotSocket()
-        // simple rating prompt timer
-        this.setState({ intervalId: setInterval(this.timer, 120000) })
         break
 
       case 'LIVECHAT':
@@ -66,7 +63,6 @@ class App extends Component {
 
   componentWillUnmount() {
     // clear the timer
-    clearInterval(this.state.intervalId)
     clearInterval(this.state.lcintervalId)
 
     // disconnect socket server
@@ -86,9 +82,6 @@ class App extends Component {
     this.sendFormDisableMah(true)
     this.props.dispatch(setChatboxMode_act('LIVECHAT'))
     this.props.dispatch(usrReqLivechat_act())
-
-    // no more rating
-    clearInterval(this.state.intervalId)
 
     // clear itself
     clearInterval(this.state.lcintervalId)
@@ -168,7 +161,7 @@ class App extends Component {
     })
   }
 
-  executeAction = (backendUrl, next_action, uuid, sender_id) => {
+  executeAction = (backendUrl, next_action, uuid, sender_id, usermsg) => {
     if (next_action === 'action_listen') {
       // stop calling execute action liao.. done
     }
@@ -223,10 +216,10 @@ class App extends Component {
               })
 
               // store the action definition
-              this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.returnAct) }))
+              this.props.dispatch(pushMsg_act({ from: 'bot', msg: JSON.stringify(result.returnAct), actionName: next_action, usermsg: usermsg }))
 
               // execute again to see whether still got any action need to execute mah
-              this.executeAction(backendUrl, result.result.next_action, uuid, sender_id)
+              this.executeAction(backendUrl, result.result.next_action, uuid, sender_id, usermsg)
 
             }
           } catch (e) {
@@ -252,7 +245,7 @@ class App extends Component {
       .send({
         uuid: envReducer.chatbotId,
         text_message: msg,
-        sender_id: this.state.chatbotSocket.socket.id
+        sender_id: 'admin: ' + this.state.chatbotSocket.socket.id
       })
       .end((err, res) => {
 
@@ -268,7 +261,7 @@ class App extends Component {
               throw new Error('no body msg')
             }
 
-            this.executeAction(backendUrl, result.next_action, cbuuid, sender_id)
+            this.executeAction(backendUrl, result.next_action, cbuuid, sender_id, msg)
           }
         } catch (e) {
           console.log(e.toString())

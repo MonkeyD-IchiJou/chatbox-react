@@ -5,6 +5,13 @@ import ChatbotTmpForm from './ChatbotTmpForm'
 
 class ChatboxBody extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state={
+      feedbackList: new Map()
+    }
+  }
+
   componentDidMount() {
     this.scrollToBottom()
   }
@@ -22,7 +29,19 @@ class ChatboxBody extends Component {
   }
 
   render() {
-    const { allMsgs, backendUrl, handleButtonClick, sendAcknowledgeMsg, chatboxMode, sendFormDisabled, showLiveChatForm, setUserInfo, maxHeight, minHeight, maxWidth } = this.props
+    const {
+      allMsgs,
+      backendUrl,
+      handleButtonClick,
+      sendAcknowledgeMsg,
+      chatboxMode,
+      sendFormDisabled,
+      showLiveChatForm,
+      setUserInfo,
+      maxHeight,
+      minHeight,
+      maxWidth
+    } = this.props
 
     let renderbody = ''
 
@@ -70,12 +89,6 @@ class ChatboxBody extends Component {
                   </Comment.Metadata>
 
                   <Comment.Text><div className="cancelpls">{msg.msg}</div></Comment.Text>
-
-                  <Comment.Actions>
-                    <Comment.Action style={{ margin: '0' }}>
-                      <Icon name='hide' size='large' />
-                    </Comment.Action>
-                  </Comment.Actions>
 
                 </Comment.Content>
 
@@ -146,6 +159,59 @@ class ChatboxBody extends Component {
               }
             }
 
+            // need to constantly listen for the thumbs up and down number for this action
+            const thumbsupNum = 0
+            const thumbsdownNum = 0
+
+            // keep track of clients' feedbacks
+            let feedbackList = this.state.feedbackList
+
+            // default thumbs up and down ui
+            let thumbsupAction = (
+              <Comment.Action>
+                <div className="cancelpls" onClick={() => {
+                  this.setState({ feedbackList: feedbackList.set(msg.actionName, 'UP') })
+                }}>
+                  <Icon name='thumbs outline up' />{thumbsupNum}
+              </div>
+              </Comment.Action>
+            )
+            let thumbsdownAction = (
+              <Comment.Action>
+                <div className="cancelpls" onClick={() => {
+                  this.setState({ feedbackList: feedbackList.set(msg.actionName, 'DOWN') })
+                }}>
+                  <Icon name='thumbs outline down' />{thumbsdownNum}
+              </div>
+              </Comment.Action>
+            )
+
+            // update the ui if client have update feedback
+            for (var [key, value] of feedbackList) {
+              if(key === msg.actionName) {
+                switch (value) {
+                  case "UP":
+                    thumbsupAction = (
+                      <Comment.Action active={true}>
+                        <Icon name='thumbs up' />{thumbsupNum}
+                    </Comment.Action>
+                    )
+                    break
+
+                  case "DOWN":
+                    thumbsdownAction = (
+                      <Comment.Action active={true} style={{ color: 'red' }}>
+                        <Icon name='thumbs down' />{thumbsdownNum}
+                    </Comment.Action>
+                    )
+                    break
+
+                  default:
+                    break
+                }
+              }
+            }
+
             return (
               <Comment key={index}>
 
@@ -161,7 +227,13 @@ class ChatboxBody extends Component {
 
                   <Comment.Text>{msgrender}</Comment.Text>
 
+                  <Comment.Actions>
+                    {thumbsupAction}
+                    {thumbsdownAction}
+                  </Comment.Actions>
+
                 </Comment.Content>
+
                 {dividermah}
 
               </Comment>
@@ -204,7 +276,7 @@ class ChatboxBody extends Component {
     }
 
     renderbody = (
-      <Comment.Group minimal>
+      <Comment.Group>
         {allMsgsRender}
       </Comment.Group>
     )

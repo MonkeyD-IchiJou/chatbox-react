@@ -7,7 +7,6 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-draggable": "^3.0.5",
-    "react-live-clock": "^2.0.2",
     "react-redux": "^5.0.6",
     "react-scripts": "1.1.0",
     "redux": "^3.7.2",
@@ -19,11 +18,11 @@
     "socket.io-client": "^2.0.4",
     "superagent": "^3.8.2"
   },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build && html2pug < ./build/index.html > ~/Desktop/ChatbotNEC/socketserver/src/views/index.pug && rm -r ~/Desktop/ChatbotNEC/webserver/chatbox/build||: && mv build ~/Desktop/ChatbotNEC/webserver/chatbox/",
-        "test": "react-scripts test --env=jsdom",
-        "eject": "react-scripts eject"
-    },
-    "homepage": "http://mywebsite.com/chatbox"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && html2pug < ./build/index.html > ~/Desktop/ChatbotNEC/socketserver/src/views/index.pug && rm -r ~/Desktop/ChatbotNEC/webserver/chatbox/build||: && mv build ~/Desktop/ChatbotNEC/webserver/chatbox/",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "homepage": "http://mywebsite.com/chatbox"
 }
