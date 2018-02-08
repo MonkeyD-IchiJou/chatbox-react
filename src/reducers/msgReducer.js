@@ -1,40 +1,40 @@
 const userReducer = (
-    state = [{
-        from: '',
-        msgtime:'',
-        msgtype:'',
-        msgheader:'',
-        msg: ''
-    }],
-    action
+  state = [{
+    from: '',
+    msgtime: '',
+    msg: '',
+    actionName: '',
+    usermsg: ''
+  }],
+  action
 ) => {
 
-    switch (action.type) {
-        case "PUSH_MSG":
-            state = [
-                ...state
-            ]
-            state.push({
-                from: action.payload.from,
-                msgtype: action.payload.msgtype,
-                msgheader: action.payload.msgheader,
-                msgtime: new Date().toLocaleTimeString(),
-                msg: action.payload.msg
-            })
-            break
+  switch (action.type) {
+    case "PUSH_MSG":
+      state = [
+        ...state
+      ]
+      state.push({
+        from: action.payload.from,
+        msgtime: new Date().toLocaleTimeString(),
+        msg: action.payload.msg,
+        actionName: action.payload.actionName,
+        usermsg: action.payload.usermsg
+      })
+      break
 
-        case "POP_MSG":
-            state = [
-                ...state
-            ]
-            state.splice(action.payload, 1)
-            break
+    case "POP_MSG":
+      state = [
+        ...state
+      ]
+      state.splice(action.payload, 1)
+      break
 
-        default:
-            break
-    }
+    default:
+      break
+  }
 
-    return state
+  return state
 
 }
 
