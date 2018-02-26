@@ -155,10 +155,48 @@ class App extends Component {
 
       chatbotSocket.subscribe('client_joined', (data) => {
         // client successfully joined the room liao
-        this.emitMsgToChatbot('who are you', true)
+        this.sendInitialRes()
       })
 
     })
+  }
+
+  sendInitialRes = () => {
+    let envReducer = this.props.envReducer
+    const sender_id = this.state.chatbotSocket.socket.id
+    const backendUrl = envReducer.backendUrl
+
+    request
+      .post(backendUrl + '/chatbot/v1/query')
+      .set('contentType', 'application/json; charset=utf-8')
+      .set('dataType', 'json')
+      .send({
+        uuid: envReducer.chatbotId,
+        text_message: 'hello',
+        sender_id: 'admin: ' + sender_id
+      })
+      .end((err, res) => {
+
+        try {
+          if (err || !res.ok) {
+            let errormsg = res.body.errors
+            throw errormsg
+          }
+          else {
+            let result = res.body
+
+            if (!result) {
+              throw new Error('no body msg')
+            }
+
+            this.emitMsgToChatbot(result.initialResponse, true)
+          }
+        } catch (e) {
+          console.log(e.toString())
+        }
+
+      })
+    
   }
 
   executeAction = (backendUrl, next_action, uuid, sender_id, usermsg) => {
@@ -195,7 +233,7 @@ class App extends Component {
               result.returnAct.forEach((act, index) => {
                 switch (act.type) {
                   case 'QR':
-                    this.sendFormDisableMah(true)
+                    //this.sendFormDisableMah(true)
                     break
                   case 'CR':
                     if (act.customObj.livechat) {
@@ -245,7 +283,7 @@ class App extends Component {
       .send({
         uuid: envReducer.chatbotId,
         text_message: msg,
-        sender_id: 'admin: ' + this.state.chatbotSocket.socket.id
+        sender_id: 'admin: ' + sender_id
       })
       .end((err, res) => {
 
