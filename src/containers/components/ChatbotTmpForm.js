@@ -3,37 +3,37 @@ import { Form, Button } from 'semantic-ui-react'
 
 class ChatbotTmpForm extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            email: ''
-        }
+  constructor(props) {
+    super(props)
+    this.state = {
+      email: ''
     }
+  }
 
-    componentDidMount() {
-        this.props.sendFormDisable()
-    }
+  componentDidMount() {
+    this.props.sendFormDisable()
+  }
 
-    handleChange = (e, { name, value }) => this.setState({ [name]: value })
+  handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
-    handleSubmit = () => {
-        this.setState({
-            email: ''
-        })
-        this.props.sendAcknowledgeMsg(this.props.indexToPop)
-    }
+  handleSubmit = () => {
+    this.setState({
+      email: ''
+    })
+    this.props.sendAcknowledgeMsg(this.props.indexToPop)
+  }
 
-    render() {
-        return (
-            <Form onSubmit={this.handleSubmit}>
+  render() {
+    return (
+      <Form onSubmit={this.handleSubmit}>
 
-                <Form.Input value={this.state.email} name='email' label='Agency Email' placeholder='Enter agency email address' type='email' required onChange={this.handleChange} />
+        <Form.Input value={this.state.email} name='email' label='Agency Email' placeholder='Enter agency email address' type='email' required onChange={this.handleChange} />
 
-                <Button type='submit'>Submit</Button>
+        <Button type='submit'>Submit</Button>
 
-            </Form>
-        )
-    }
+      </Form>
+    )
+  }
 }
 
 export default ChatbotTmpForm

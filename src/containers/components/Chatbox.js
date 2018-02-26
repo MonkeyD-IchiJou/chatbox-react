@@ -31,7 +31,7 @@ class Chatbox extends Component {
   sendAcknowledgeMsg = (indexToPop) => {
     this.props.popMessage(indexToPop)
     this.props.sendMsg('who are you', true)
-    this.sendFormDisableMah(false)
+    this.props.sendFormDisableMah(false)
   }
 
   render() {
