@@ -5,6 +5,7 @@ import store from './store'
 import { Provider } from 'react-redux'
 import defaultEnvStore from './reducers/defaultEnvStore'
 import 'semantic-ui-css/semantic.min.css'
+import 'babel-polyfill'
 
 window.RenderApp = function (chatbotId, livechatId) {
 
@@ -23,10 +24,10 @@ window.RenderApp = function (chatbotId, livechatId) {
   }
 
   // tmp, delete in production mode pls
-  defaultEnvStore.chatboxMode = 'CHATBOT'
+  //defaultEnvStore.chatboxMode = 'CHATBOT'
   //defaultEnvStore.chatboxMode = 'LIVECHAT'
 
-  defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
+  //defaultEnvStore.chatbotId = 'n6Avu8RVGLffnp8ghz8PaavD5R6cYzHWRPbQxh26fpCtdqgps'
   //defaultEnvStore.livechatId = 'QRdCHThaReh4vgQwuqN71LWBopF12ufXRAfcoSvzMGLRM7Cn6'
 
   new ReactDOM.render(
