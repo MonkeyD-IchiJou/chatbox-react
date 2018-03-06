@@ -8,7 +8,9 @@ class ChatboxBody extends Component {
   constructor(props) {
     super(props)
     this.state={
-      feedbackList: new Map()
+      feedbackList: new Map(),
+      actionsThumbsup: new Map(),
+      actionsThumbsdown: new Map()
     }
   }
 
@@ -159,49 +161,68 @@ class ChatboxBody extends Component {
               }
             }
 
-            // need to constantly listen for the thumbs up and down number for this action
-            const thumbsupNum = 0
-            const thumbsdownNum = 0
-
             // keep track of clients' feedbacks
-            let feedbackList = this.state.feedbackList
+            const { feedbackList, actionsThumbsup, actionsThumbsdown } = this.state
+            const da_actionName = msg.actionName
 
             // default thumbs up and down ui
             let thumbsupAction = (
               <Comment.Action>
                 <div className="cancelpls" onClick={() => {
-                  this.setState({ feedbackList: feedbackList.set(msg.actionName, 'UP') })
+                  this.setState({
+                    feedbackList: feedbackList.set(da_actionName, 'UP'),
+                    actionsThumbsup: actionsThumbsup.set(da_actionName, 1),
+                    actionsThumbsdown: actionsThumbsdown.set(da_actionName, 0)
+                  })
                 }}>
-                  <Icon name='thumbs outline up' />{thumbsupNum}
+                  <Icon name='thumbs outline up' />{0}
               </div>
               </Comment.Action>
             )
             let thumbsdownAction = (
               <Comment.Action>
                 <div className="cancelpls" onClick={() => {
-                  this.setState({ feedbackList: feedbackList.set(msg.actionName, 'DOWN') })
+                  this.setState({
+                    feedbackList: feedbackList.set(da_actionName, 'DOWN'),
+                    actionsThumbsup: actionsThumbsup.set(da_actionName, 0),
+                    actionsThumbsdown: actionsThumbsdown.set(da_actionName, 1)
+                  })
                 }}>
-                  <Icon name='thumbs outline down' />{thumbsdownNum}
+                  <Icon name='thumbs outline down' />{0}
               </div>
               </Comment.Action>
             )
 
-            // update the ui if client have update feedback
+            // update the ui if client alr have update feedback
             for (var [key, value] of feedbackList) {
-              if(key === msg.actionName) {
+              if (key === da_actionName) {
                 switch (value) {
                   case "UP":
                     thumbsupAction = (
                       <Comment.Action active={true}>
-                        <Icon name='thumbs up' />{thumbsupNum}
-                    </Comment.Action>
+                        <div className="cancelpls" onClick={() => {
+                          this.setState({
+                            feedbackList: feedbackList.set(da_actionName, 'NO'),
+                            actionsThumbsup: actionsThumbsup.set(da_actionName, 0)
+                          })
+                        }}>
+                          <Icon name='thumbs up' />{1}
+                        </div>
+                      </Comment.Action>
                     )
                     break
 
                   case "DOWN":
                     thumbsdownAction = (
                       <Comment.Action active={true} style={{ color: 'red' }}>
-                        <Icon name='thumbs down' />{thumbsdownNum}
+                        <div className="cancelpls" onClick={() => {
+                          this.setState({
+                            feedbackList: feedbackList.set(da_actionName, 'NO'),
+                            actionsThumbsdown: actionsThumbsdown.set(da_actionName, 0)
+                          })
+                        }}>
+                          <Icon name='thumbs down' />{1}
+                        </div>
                     </Comment.Action>
                     )
                     break
