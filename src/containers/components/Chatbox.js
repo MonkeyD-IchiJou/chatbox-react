@@ -28,8 +28,9 @@ class Chatbox extends Component {
     this.props.sendFormDisableMah(false)
   }
 
-  sendAcknowledgeMsg = (indexToPop) => {
+  sendAcknowledgeMsg = (indexToPop, newSenderID) => {
     this.props.popMessage(indexToPop)
+    this.props.setSenderID(newSenderID)
     this.props.sendMsg('who are you', true)
     this.props.sendFormDisableMah(false)
   }

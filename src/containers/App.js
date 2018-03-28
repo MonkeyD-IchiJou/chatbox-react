@@ -29,7 +29,8 @@ class App extends Component {
       livechatSocket: new SocketConnect('livechatSocket'),
       sendFormDisabled: false,
       LivechatCounter: 0,
-      lcintervalId: 0
+      lcintervalId: 0,
+      senderID: ''
     }
   }
 
@@ -72,6 +73,10 @@ class App extends Component {
 
   timer = () => {
     this.emitMsgToChatbot('rating', true)
+  }
+
+  setSenderID = (senderID) => {
+    this.setState({senderID: senderID})
   }
 
   ChatbotToLivechat = () => {
@@ -199,7 +204,62 @@ class App extends Component {
     
   }
 
+  emitMsgToChatbot = (msg, nodispatch) => {
+
+    let envReducer = this.props.envReducer
+    let sender_id = this.state.chatbotSocket.socket.id
+    const backendUrl = envReducer.backendUrl
+    const cbuuid = envReducer.chatbotId
+
+    // if received agent email.. then store it
+    if(this.state.senderID) {
+      sender_id = this.state.senderID
+    }
+
+    request
+      .post(backendUrl + '/chatbot/v1/query')
+      .set('contentType', 'application/json; charset=utf-8')
+      .set('dataType', 'json')
+      .send({
+        uuid: cbuuid,
+        text_message: msg,
+        sender_id: sender_id
+      })
+      .end((err, res) => {
+
+        try {
+          if (err || !res.ok) {
+            let errormsg = res.body.errors
+            throw errormsg
+          }
+          else {
+            let result = res.body
+
+            if (!result) {
+              throw new Error('no body msg')
+            }
+
+            // there is a bug here, cannot have same sender_id when execute it
+            this.executeAction(backendUrl, result.next_action, cbuuid, 'admin: ' + sender_id, msg)
+          }
+        } catch (e) {
+          console.log(e.toString())
+        }
+
+      })
+
+    if (nodispatch === true) {
+      // do not do anything
+    }
+    else {
+      // store this user msg
+      this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
+    }
+
+  }
+
   executeAction = (backendUrl, next_action, uuid, sender_id, usermsg) => {
+
     if (next_action === 'action_listen') {
       // stop calling execute action liao.. done
     }
@@ -269,54 +329,6 @@ class App extends Component {
     }
   }
 
-  emitMsgToChatbot = (msg, nodispatch) => {
-
-    let envReducer = this.props.envReducer
-    const sender_id = this.state.chatbotSocket.socket.id
-    const backendUrl = envReducer.backendUrl
-    const cbuuid = envReducer.chatbotId
-
-    request
-      .post(backendUrl + '/chatbot/v1/query')
-      .set('contentType', 'application/json; charset=utf-8')
-      .set('dataType', 'json')
-      .send({
-        uuid: envReducer.chatbotId,
-        text_message: msg,
-        sender_id: 'admin: ' + sender_id
-      })
-      .end((err, res) => {
-
-        try {
-          if (err || !res.ok) {
-            let errormsg = res.body.errors
-            throw errormsg
-          }
-          else {
-            let result = res.body
-
-            if (!result) {
-              throw new Error('no body msg')
-            }
-
-            this.executeAction(backendUrl, result.next_action, cbuuid, sender_id, msg)
-          }
-        } catch (e) {
-          console.log(e.toString())
-        }
-
-      })
-
-    if (nodispatch === true) {
-      // do not do anything
-    }
-    else {
-      // store this user msg
-      this.props.dispatch(pushMsg_act({ from: 'user', msg: msg }))
-    }
-
-  }
-
   emitMsgToLivechatSocket = (msg) => {
 
     const { userReducer, adminReducer } = this.props
@@ -365,6 +377,7 @@ class App extends Component {
             sendFormDisabled={this.state.sendFormDisabled}
             sendFormDisableMah={this.sendFormDisableMah}
             headerName={'Ask NEC Chatbot'}
+            setSenderID={this.setSenderID}
           />
         )
 

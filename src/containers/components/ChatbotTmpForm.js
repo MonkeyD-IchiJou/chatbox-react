@@ -17,10 +17,10 @@ class ChatbotTmpForm extends Component {
   handleChange = (e, { name, value }) => this.setState({ [name]: value })
 
   handleSubmit = () => {
+    this.props.sendAcknowledgeMsg(this.props.indexToPop, this.state.email)
     this.setState({
       email: ''
     })
-    this.props.sendAcknowledgeMsg(this.props.indexToPop)
   }
 
   render() {
